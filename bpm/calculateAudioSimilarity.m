@@ -1,5 +1,7 @@
 %function [] = calculateAudioSimilarity()
 
+%%%%%%%%%% n小節ごとの頭1秒のみを取り出し、相関量を計量するプログラム %%%%%%%%%%
+
 %真似したい音楽
 [fname_yourMusic, dpath_yourMusic]  =  uigetfile({'*.wav;*.mp3;*.au','Audio File(*.wav,*.mp3,*.au)'},'Open Audio File you want to use as reference ');
 [y_yourMusic, yourMusic] = audioToMatrix(fname_yourMusic, dpath_yourMusic);
