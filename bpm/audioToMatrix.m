@@ -1,4 +1,4 @@
-function [merge, result] = audioToMatrix(fname, dpath)
+function [merge, result, songBPM] = audioToMatrix(fname, dpath)
 %UI‚Åƒtƒ@ƒCƒ‹Žæ“¾
 %[fname, dpath]  =  uigetfile({'*.wav;*.mp3','Audio File(*.wav,*.mp3)'},'Open Audio File');
 [y, Fs] = audioread(fullfile(dpath, fname));

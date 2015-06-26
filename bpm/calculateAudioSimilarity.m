@@ -4,7 +4,7 @@
 
 %真似したい音楽
 [fname_yourMusic, dpath_yourMusic]  =  uigetfile({'*.wav;*.mp3;*.au','Audio File(*.wav,*.mp3,*.au)'},'Open Audio File you want to use as reference ');
-[y_yourMusic, yourMusic] = audioToMatrix(fname_yourMusic, dpath_yourMusic);
+[y_yourMusic, yourMusic, bpm_yourMusic] = audioToMatrix(fname_yourMusic, dpath_yourMusic);
 figure;
 subplot(2,1,1);
 plot(y_yourMusic(:, 1));
@@ -26,7 +26,7 @@ for k = 1 : length(D)
     [pathstr_sampleMusic,name_sampleMusic,ext_sampleMusic] = fileparts(D(k).name); %パス、ファイル名、拡張子の取得
     fname_sampleMusic{k} = strcat(name_sampleMusic, ext_sampleMusic); %ファイル名と拡張子を結合
     %マトリクス取得
-    [~, matrix_sampleMusic] = audioToMatrix(fname_sampleMusic{k}, dpath_sampleMusic);
+    [~, matrix_sampleMusic, ~] = audioToMatrix(fname_sampleMusic{k}, dpath_sampleMusic);
 
     %コサイン類似度計算
     similarity{k} = calculateCosineSimilarity(yourMusic, matrix_sampleMusic);
@@ -37,7 +37,7 @@ for k = 1 : length(D)
     fname_sampleMusic_legend{fname_sampleMusic_legend_index} = fname_sampleMusic{k}; %凡例用配列に追加
     %プロット_ここから
     plot(similarity{k}(1:length(similarity{k}) - 1))
-    xlim([0, length(yourMusic(:,1))]);
+    xlim([1.0, length(yourMusic(:,1)) + 1]);
     ylim([0.0, 1.0]);
     hold all;
     %プロット_ここまで
