@@ -46,7 +46,7 @@ for k = 1 : length(D)
 end
 
 title(['Time series variation of similarities | ' fname_yourMusic]);
-xlabel('Time (Seconds)');
+xlabel('Time (bars)');
 ylabel('Similarity');
 legend(fname_sampleMusic_legend);
 grid minor;
