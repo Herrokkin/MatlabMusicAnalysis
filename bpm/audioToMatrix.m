@@ -1,4 +1,4 @@
-function [merge, result, songBPM] = audioToMatrix(fname, dpath)
+function [merge, result, songBPM] = audioToMatrix(fname, dpath, frame_beats)
 %UIでファイル取得
 %[fname, dpath]  =  uigetfile({'*.wav;*.mp3','Audio File(*.wav,*.mp3)'},'Open Audio File');
 [y, Fs] = audioread(fullfile(dpath, fname));
@@ -9,7 +9,7 @@ existcsv = exist(csvfilename, 'file'); %csvが存在するか判定
 if existcsv == 2 %csv存在する場合
     result = csvread(csvfilename);
 else %csv存在しない場合=>フーリエ変換
-    %ステレオ/モノラルで分岐
+    % %ステレオ/モノラルで分岐
     if length(y(1,:)) == 2 %ステレオ時
         %merge = (y(:, 1) - y(:, 2)); %Side成分=L-R
         merge = (y(:, 1) + y(:, 2)); %Mid成分=L+R
@@ -17,10 +17,10 @@ else %csv存在しない場合=>フーリエ変換
         merge = y(:, 1); %モノラルをそのまま使用
     end
 
-    %BPM推定
+    %% BPM推定
     songBPM = searchBPM(merge, Fs);
     
-    %プリエンファシス(高域強調)
+    %% プリエンファシス(高域強調)
     pre_emphasis = 0.97; %プリエンファシス係数
     merge_high_emphasis = [];
     merge_high_emphasis(1) = merge(1);
@@ -30,9 +30,9 @@ else %csv存在しない場合=>フーリエ変換
         merge_high_emphasis = [merge_high_emphasis; thisData];
     end
     
-    %拍の先頭を推定
+    %% 拍の先頭を推定
     peak_count_frame_size = 512;
-    peak_count_frame_max = 44100 * 5 / peak_count_frame_size; %最初のn秒間を使用
+    peak_count_frame_max = Fs * 0.5 / peak_count_frame_size; %最初のn秒間を使用
     for peak_count = 1 : peak_count_frame_max - 1
         if sum(merge_high_emphasis((peak_count - 1) * peak_count_frame_size + 1 : (peak_count - 1) * peak_count_frame_size + peak_count_frame_size, 1)) .^2 <= sum(merge_high_emphasis(peak_count * peak_count_frame_size + 1 : peak_count * peak_count_frame_size + peak_count_frame_size, 1)) .^2 && sum(merge_high_emphasis(peak_count * peak_count_frame_size + 1 : peak_count * peak_count_frame_size + peak_count_frame_size, 1)) .^2 >= sum(merge_high_emphasis((peak_count + 1) * peak_count_frame_size + 1 : (peak_count + 1) * peak_count_frame_size + peak_count_frame_size, 1)) .^2
             peak_count_start = peak_count;
@@ -40,10 +40,10 @@ else %csv存在しない場合=>フーリエ変換
     end
     merge_starttime = merge_high_emphasis(peak_count_start * peak_count_frame_size : length(merge_high_emphasis),1);
     
-    %高速フーリエ変換
-    frame_length = floor(Fs / (songBPM / 60) * 8); %フレーム幅
+    %% 高速フーリエ変換
+    frame_length = floor(Fs / (songBPM / 60) * frame_beats); %フレーム幅。最後に掛けるののはビート数
     N = floor(length(merge_starttime) / frame_length); %楽曲÷フレーム幅
-    width_result = Fs; %サンプリング長
+    width_result = 11025; %サンプリング長。Fsだと高次元。
     result = zeros(N, width_result); %返り値設定
     window = hamming(width_result); %ハミング窓設定
     index = 1;

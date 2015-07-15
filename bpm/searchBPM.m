@@ -11,7 +11,7 @@ function [songBPM] = searchBPM(y, Fs)
 %     merge = y(:, 1); %ƒ‚ƒmƒ‰ƒ‹‚ð‚»‚Ì‚Ü‚ÜŽg—p
 % end
 
-%%%%%‚±‚±‚©‚çBPM•ªŠ„%%%%%
+%% ‚±‚±‚©‚çBPM•ªŠ„
 %http://ism1000ch.hatenablog.com/entry/2014/07/08/164124
 merge = y;
 sample_total = length(merge);
@@ -52,6 +52,5 @@ end
 
 %ŒvŽZ‚µ‚½BPM‚ðreturn
 songBPM = find(match_list == max(match_list));
-%%%%%‚±‚±‚Ü‚ÅBPM•ªŠ„%%%%%
 
 end

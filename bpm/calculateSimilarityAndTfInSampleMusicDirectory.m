@@ -1,28 +1,11 @@
-%function [] = calculateAudioSimilarity()
-
-%% n小節ごとの頭1秒のみを取り出し、相関量を計量するプログラム %%%%%%%%%%
-%%%% functions %%%%
-%%% [y, result, bpm] = audioToMatrix(fname, dpath, beats) %%%
-%%% similarity{} = calculateCosineSimilarity(yourMusic, sampleMusic) %%%
-
-%% 真似したい音楽を取得・変換・プロット
-[fname_yourMusic, dpath_yourMusic]  =  uigetfile({'*.wav;*.mp3;*.au','Audio File(*.wav,*.mp3,*.au)'},'Open Audio File you want to use as reference ');
-[y_yourMusic, yourMusic, bpm_yourMusic] = audioToMatrix(fname_yourMusic, dpath_yourMusic, 16);
-figure;
-subplot(2,1,1);
-plot(y_yourMusic(:, 1));
-title(fname_yourMusic);
-xlabel('Time (Seconds)');
-
-%% サンプル音楽ディレクトリの選択・取得・変換・コサイン類似度計量・プロット
-dpath_sampleMusic  =  uigetdir;
+function [similarity, tf_idf_cell] = calculateSimilarityAndTfInSampleMusicDirectory(yourMusic, dpath_sampleMusic)
 dpath_sampleMusic = [dpath_sampleMusic '/'];
 D = dir([dpath_sampleMusic '*.wav']);
 fname_sampleMusic = cell(1, length(D));
 fname_sampleMusic_legend = []; %凡例用配列を作成
-fname_sampleMusic_legend_index = 0; %凡例用配列インデックスを作成
+% fname_sampleMusic_legend_index = 0; %凡例用配列インデックスを作成
 similarity = cell(1, length(D));
-wb = waitbar(0,'Please wait...'); %進行状況の表示
+% wb = waitbar(0,'Please wait...'); %進行状況の表示
 
 for k = 1 : length(D)
     %サンプル側マトリクスの作成
@@ -35,26 +18,26 @@ for k = 1 : length(D)
     similarity{k} = calculateCosineSimilarity(yourMusic, matrix_sampleMusic);
     
     %プロット関連
-    subplot(2,1,2);
+%     subplot(2,1,2);
     fname_sampleMusic_legend_index = fname_sampleMusic_legend_index + 1; %凡例用配列インデックスを増加
     fname_sampleMusic_legend{fname_sampleMusic_legend_index} = fname_sampleMusic{k}; %凡例用配列に追加
     %プロット_ここから
-    plot(similarity{k}(1:length(similarity{k}) - 1), '-x')
-    xlim([1.0, length(yourMusic(:,1)) + 1]);
-    ylim([0.0, 1.0]);
-    hold all;
+%     plot(similarity{k}(1:length(similarity{k}) - 1), '-x')
+%     xlim([1.0, length(yourMusic(:,1)) + 1]);
+%     ylim([0.0, 1.0]);
+%     hold all;
     %プロット_ここまで
-
-    waitbar(k / length(D)) %進行状況の表示
+% 
+%     waitbar(k / length(D)) %進行状況の表示
 end
 
-title(['Time series variation of similarities | ' fname_yourMusic]);
-xlabel('Time (bars)');
-ylabel('Similarity');
-legend(fname_sampleMusic_legend);
-grid minor;
-hold off;
-close(wb) %進行状況の非表示
+% title(['Time series variation of similarities | ' fname_yourMusic]);
+% xlabel('Time (bars)');
+% ylabel('Similarity');
+% legend(fname_sampleMusic_legend);
+% grid minor;
+% hold off;
+% close(wb) %進行状況の非表示
 
 %% ジャンル分け
 %楽曲全体
@@ -107,5 +90,4 @@ disp(['Genre: ' fname_genre_all_mean ', Mean: ' num2str(mean(similarity{index_ge
 disp(['Genre: ' fname_genre_all_tf ', TF: ' num2str(tf_idf_cell{index_genre_all_tf, 2}) '/' num2str(length(fname_sampleMusic_legend)) ' (' num2str(tf_idf_cell{index_genre_all_tf, 2} / length(fname_sampleMusic_legend) * 100) '%)']); %TFで出したジャンルを表示
 
 
-
-%end
+end
