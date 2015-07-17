@@ -54,7 +54,7 @@ for m = 1 : length(D_yourMusic) - 1
 end
 
 for x = 1 : length(similarity_tmp) * length(D_yourMusic)
-    tf_idf_cell{x, 4} = (tf_idf_cell{x, 2} / 29) * tf_idf_cell{x, 3};
+    tf_idf_cell{x, 4} = tf_idf_cell{x, 2} * tf_idf_cell{x, 3};
 end
 
 % figure;
