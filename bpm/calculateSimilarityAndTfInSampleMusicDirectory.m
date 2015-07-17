@@ -3,7 +3,7 @@ dpath_sampleMusic = [dpath_sampleMusic '/'];
 D = dir([dpath_sampleMusic '*.wav']);
 fname_sampleMusic = cell(1, length(D));
 fname_sampleMusic_legend = []; %凡例用配列を作成
-% fname_sampleMusic_legend_index = 0; %凡例用配列インデックスを作成
+fname_sampleMusic_legend_index = 0; %凡例用配列インデックスを作成
 similarity = cell(1, length(D));
 % wb = waitbar(0,'Please wait...'); %進行状況の表示
 
@@ -43,14 +43,15 @@ end
 %楽曲全体
 fname_genre_all_mean = fname_sampleMusic_legend{1};
 index_genre_all_mean = 1;
+index_min_similarity_length = 1;
 for loop_genre_all = 2: length(similarity)
     if mean(similarity{index_genre_all_mean}) <= mean(similarity{loop_genre_all}) %平均を使用
         fname_genre_all_mean = fname_sampleMusic_legend{loop_genre_all};
         index_genre_all_mean = loop_genre_all;
     end
     %各類似度の長さ最小値取得。tf値用。
-    if length(similarity{index_genre_all_mean}) >= length(similarity{loop_genre_all})
-        min_similarity_length = loop_genre_all;
+    if length(similarity{index_min_similarity_length}) >= length(similarity{loop_genre_all})
+        min_similarity_length = length(similarity{loop_genre_all});
     end
 end
 
@@ -86,6 +87,7 @@ for tf_idf_cell_x = 1 : 3
     end
 end
 
+disp('--');
 disp(['Genre: ' fname_genre_all_mean ', Mean: ' num2str(mean(similarity{index_genre_all_mean}))]); %meanで出したジャンルを表示
 disp(['Genre: ' fname_genre_all_tf ', TF: ' num2str(tf_idf_cell{index_genre_all_tf, 2}) '/' num2str(length(fname_sampleMusic_legend)) ' (' num2str(tf_idf_cell{index_genre_all_tf, 2} / length(fname_sampleMusic_legend) * 100) '%)']); %TFで出したジャンルを表示
 

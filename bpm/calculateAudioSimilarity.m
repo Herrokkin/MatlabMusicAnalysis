@@ -7,7 +7,7 @@
 
 %% 真似したい音楽を取得・変換・プロット
 [fname_yourMusic, dpath_yourMusic]  =  uigetfile({'*.wav;*.mp3;*.au','Audio File(*.wav,*.mp3,*.au)'},'Open Audio File you want to use as reference ');
-[y_yourMusic, yourMusic, bpm_yourMusic] = audioToMatrix(fname_yourMusic, dpath_yourMusic, 16);
+[y_yourMusic, yourMusic, bpm_yourMusic] = audioToMatrix(fname_yourMusic, dpath_yourMusic, 8);
 figure;
 subplot(2,1,1);
 plot(y_yourMusic(:, 1));
@@ -60,14 +60,15 @@ close(wb) %進行状況の非表示
 %楽曲全体
 fname_genre_all_mean = fname_sampleMusic_legend{1};
 index_genre_all_mean = 1;
+index_min_similarity_length = 1;
 for loop_genre_all = 2: length(similarity)
     if mean(similarity{index_genre_all_mean}) <= mean(similarity{loop_genre_all}) %平均を使用
         fname_genre_all_mean = fname_sampleMusic_legend{loop_genre_all};
         index_genre_all_mean = loop_genre_all;
     end
     %各類似度の長さ最小値取得。tf値用。
-    if length(similarity{index_genre_all_mean}) >= length(similarity{loop_genre_all})
-        min_similarity_length = loop_genre_all;
+    if length(similarity{index_min_similarity_length}) >= length(similarity{loop_genre_all})
+        min_similarity_length = length(similarity{loop_genre_all});
     end
 end
 
