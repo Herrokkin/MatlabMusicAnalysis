@@ -101,6 +101,7 @@ for tf_idf_cell_x = 1 : 3
             fname_genre_all_tf = fname_sampleMusic_legend{tf_idf_cell_y};
             index_genre_all_tf = tf_idf_cell_y;
         end
+        tf_idf_cell{tf_idf_cell_y, 3} = 0;
     end
 end
 

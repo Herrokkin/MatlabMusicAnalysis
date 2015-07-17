@@ -71,7 +71,7 @@ end
 
 %tf-idfŒvZ
 fname_genre_part(find(cellfun('isempty',fname_genre_part))) = []; %ƒZƒ‹‚Ì[]•”•ª‚ğíœ
-tf_idf_cell = cell(length(fname_sampleMusic_legend), 3); %tf-idfŠi”[—p•Ï”
+tf_idf_cell = cell(length(fname_sampleMusic_legend), 4); %tf-idfŠi”[—p•Ï”
 fname_genre_all_tf = fname_sampleMusic_legend{1};
 index_genre_all_tf = 1;
 for tf_idf_cell_x = 1 : 3
@@ -79,11 +79,13 @@ for tf_idf_cell_x = 1 : 3
         tf_idf_cell{tf_idf_cell_y, 1} = fname_sampleMusic_legend{tf_idf_cell_y};
         tf_temp = strfind(fname_genre_part, fname_sampleMusic_legend{tf_idf_cell_y});
         tf_temp(find(cellfun('isempty',tf_temp))) = []; %ƒZƒ‹‚Ì[]•”•ª‚ğíœ
-        tf_idf_cell{tf_idf_cell_y, 2} = length(tf_temp);
+        tf_idf_cell{tf_idf_cell_y, 2} = length(tf_temp) / length(fname_sampleMusic_legend);
         if tf_idf_cell{index_genre_all_tf, 2} <= tf_idf_cell{tf_idf_cell_y, 2}
             fname_genre_all_tf = fname_sampleMusic_legend{tf_idf_cell_y};
             index_genre_all_tf = tf_idf_cell_y;
         end
+        tf_idf_cell{tf_idf_cell_y, 3} = 0;
+        tf_idf_cell{tf_idf_cell_y, 4} = 0;
     end
 end
 
