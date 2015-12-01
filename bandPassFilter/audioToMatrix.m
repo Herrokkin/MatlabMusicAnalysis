@@ -1,4 +1,4 @@
-function [merge_starttime_filtered, result, songBPM] = audioToMatrix(fname, dpath, frame_beats)
+function [merge_starttime_filtered, result, songBPM] = audioToMatrix(fname, dpath, frame_beats, bandpass_choice)
 % UIでファイル取得
 % [fname, dpath]  =  uigetfile({'*.wav;*.mp3','Audio File(*.wav,*.mp3)'},'Open Audio File');
 [y, Fs] = audioread(fullfile(dpath, fname));
@@ -49,9 +49,23 @@ else % csv存在しない場合=>フーリエ変換
     window = hamming(width_result); %ハミング窓設定
     
     %% 帯域フィルタ
-    Wn = [300 500]/(Fs/2); % 通過帯域を表すベクトル。0Hzが0、(Fs/2)Hzが1となるようスケーリング
-    fil = fir1(width_result, Wn ,'bandpass'); % バンドパスフィルタの設計
-    merge_starttime_filtered = filter(fil, 1, merge_starttime);
+    % 現状はメロディ(Vocalに相当)、リズム(Drumに相当)、ハーモニー(Bass)のみで静的な分岐。周波数は、Shure社の表を参照。
+    % http://www.shureblog.jp/shure-notes/%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%83%9B%E3%83%B3-%E5%91%A8%E6%B3%A2%E6%95%B0%E7%89%B9%E6%80%A7%E3%81%AE%E8%A6%8B%E6%96%B9/
+    if bandpass_choice == 1 % Melody・150-1000Hzを通過
+        Wn = [150 1000]/(Fs/2); % 通過帯域を表すベクトル。0Hzが0、(Fs/2)Hzが1となるようスケーリング
+        fil = fir1(width_result, Wn ,'bandpass'); % バンドパスフィルタの設計
+        merge_starttime_filtered = filter(fil, 1, merge_starttime);
+    elseif bandpass_choice == 2 % Rhythm・80-4000Hzをストップ
+        Wn = [80 4000 width_result]/(Fs/2); % 通過帯域を表すベクトル。0Hzが0、(Fs/2)Hzが1となるようスケーリング
+        fil = fir1(width_result, Wn ,'DC-0'); % バンドストップフィルタの設計
+        merge_starttime_filtered = filter(fil, 1, merge_starttime);
+    elseif bandpass_choice == 3 % Harmony・80-300Hzを通過
+        Wn = [80 300]/(Fs/2); % 通過帯域を表すベクトル。0Hzが0、(Fs/2)Hzが1となるようスケーリング
+        fil = fir1(width_result, Wn ,'bandpass'); % バンドパスフィルタの設計
+        merge_starttime_filtered = filter(fil, 1, merge_starttime);
+    else
+        merge_starttime_filtered = merge_starttime;
+    end
     
     %% FFT実行
     index = 1;
