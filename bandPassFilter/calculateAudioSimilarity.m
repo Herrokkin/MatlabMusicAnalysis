@@ -92,6 +92,24 @@ close(wb) % 進行状況の非表示
 
 %% -----結果用セル配列のテーブル化およびcsv書き出し-----
 resultTable = cell2table(result);
-writetable(resultTable,'tabledata.csv');
+writetable(resultTable,['similarities_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.csv']);
+
+%% -----最大値のジャンル結果を1列に表示-----
+genreOneRow = [];
+for m = 6:200
+    max_tmp = 0;
+    for l = 1:k
+        if result{l,m} >= max_tmp
+            max_tmp = result{l,m};
+            if max_tmp == 0
+                genreOneRow{1,m-5} = [];
+            else
+                genreOneRow{1,m-5} = result{l,5};
+            end
+        end
+    end
+end
+resultTable = cell2table(genreOneRow);
+writetable(resultTable,['genreOneRow_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.csv']);
 
 %end
