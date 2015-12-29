@@ -1,6 +1,7 @@
 AudioFiles/
 plot/
 bandPassFilter/img/
+bandPassFilter/results/
 *.png
 *.fig
 *.wav

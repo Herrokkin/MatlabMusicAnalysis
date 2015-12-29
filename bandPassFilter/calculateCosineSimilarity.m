@@ -3,16 +3,20 @@ function [similarity] = calculateCosineSimilarity(yourMusic, srcMusic)
 lengthYourMusic = length(yourMusic(:,1));
 lengthSrcMusic = length(srcMusic(:,1));
 
+%計算周波数指定
+lowFrequency = 1;
+highFrequency = 10000;
+
 %各行ごとに真似したい側ノルムの作成
 normYourMusic = zeros(lengthYourMusic, 1);
 for countNormYourMusic = 1 : lengthYourMusic
-    normYourMusic(countNormYourMusic,1) = norm(yourMusic(countNormYourMusic, 1:5000)); %low-high(Hz)のみ計算対象
+    normYourMusic(countNormYourMusic,1) = norm(yourMusic(countNormYourMusic, lowFrequency:highFrequency)); %lowFrequency-highFrequency(Hz)のみ計算対象
 end
 
 %各行ごとにサンプル側ノルムの作成
 normSrcMusic = zeros(lengthSrcMusic, 1);
 for countNormSrcMusic = 1 : lengthSrcMusic
-    normSrcMusic(countNormSrcMusic,1) = norm(srcMusic(countNormSrcMusic, 1:5000)); %low-high(Hz)のみ計算対象
+    normSrcMusic(countNormSrcMusic,1) = norm(srcMusic(countNormSrcMusic, lowFrequency:highFrequency)); %lowFrequency-highFrequency(Hz)のみ計算対象
 end
 
 %ずらしながらコサイン類似度算出
@@ -20,7 +24,7 @@ similarityTmp = zeros(lengthSrcMusic, 1, lengthYourMusic - lengthSrcMusic + 1);
 for i = 1 : lengthYourMusic - lengthSrcMusic + 1
     for j = 1 : lengthSrcMusic
         %秒ごとに多次元配列化
-        similarityTmp(j,1,i) = (dot(yourMusic(i+j-1, 1:5000), srcMusic(j, 1:5000))) / (normYourMusic(i+j-1,1) * normSrcMusic(j,1)); %20-20000Hzのみ計算対象
+        similarityTmp(j,1,i) = (dot(yourMusic(i+j-1, lowFrequency:highFrequency), srcMusic(j, lowFrequency:highFrequency))) / (normYourMusic(i+j-1,1) * normSrcMusic(j,1)); %lowFrequency-highFrequency(Hz)のみ計算対象
     end
 end
 

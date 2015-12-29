@@ -16,7 +16,7 @@ for filecount = 0 : 9
     
     % 分析対象とする楽曲の選択
     dpath_yourMusic = ['/Users/K1/Documents/MATLAB/Audio/AudioFiles/genres/' genreName '/'];
-    fname_yourMusic = [genreName '.0000' int2str(filecount) '.au'];
+    fname_yourMusic = [genreName '.0000' int2str(filecount) '.wav'];
     % [fname_yourMusic, dpath_yourMusic]  =  uigetfile({'*.wav;*.mp3;*.au','Audio File(*.wav,*.mp3,*.au)'},'分析対象とする楽曲を選択してください。 | Open Audio File you want to use as reference.');
     % genre_choice_str = {'blues','classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock'};
     % genre_choice_yourMusic = menu('楽曲のジャンルを選択してください。 | What genre is this music?','blues','classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock');
@@ -69,8 +69,8 @@ for filecount = 0 : 9
     % サンプル音楽ディレクトリの選択
     % dpath_sampleMusic  =  uigetdir;
     % dpath_sampleMusic = [dpath_sampleMusic '/'];
-    bandpass_choice_str_cakewalk = {'Vocal', 'drums_all', 'Bass'};
-    dpath_sampleMusic = ['/Users/K1/Documents/MATLAB/Audio/AudioFiles/cakewalk/' bandpass_choice_str_cakewalk{bandpass_choice} '/'];
+    bandpass_choice_str_cakewalk = {'vocal', 'drum', 'bass'};
+    dpath_sampleMusic = ['/Users/K1/Documents/MATLAB/Audio/AudioFiles/experiment/cakewalk/' bandpass_choice_str_cakewalk{bandpass_choice} '/'];
     sampleMusicDataset = 'Cakewalk';
     % sampleMusicDataset = input('Dataset Name: '); % データセット名入力
     D = dir([dpath_sampleMusic '*.wav']); % wavファイル検索

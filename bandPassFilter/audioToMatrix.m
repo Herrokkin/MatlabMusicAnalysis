@@ -44,22 +44,22 @@ else % csv存在しない場合=>フーリエ変換
     %% FFT前準備
     frame_length = floor(Fs / (songBPM / 60) * frame_beats); %フレーム幅。最後に掛けるののはビート数
     N = floor(length(merge_starttime) / frame_length); %楽曲÷フレーム幅
-    width_result = 11025; %サンプリング長。Fsだと高次元の為、小さめに。
+    width_result = 22050; %サンプリング長。Fsだと高次元の為、小さめに。
     result = zeros(N, width_result); %返り値設定
     window = hamming(width_result); %ハミング窓設定
     
     %% 帯域フィルタ
     % 現状はメロディ(Vocalに相当)、リズム(Drumに相当)、ハーモニー(Bass)のみで静的な分岐。周波数は、Shure社の表を参照。
     % http://www.shureblog.jp/shure-notes/%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%83%9B%E3%83%B3-%E5%91%A8%E6%B3%A2%E6%95%B0%E7%89%B9%E6%80%A7%E3%81%AE%E8%A6%8B%E6%96%B9/
-    if bandpass_choice == 1 % Melody・150-1000Hzを通過
-        Wn = [150 1000]/(Fs/2); % 通過帯域を表すベクトル。0Hzが0、(Fs/2)Hzが1となるようスケーリング
+    if bandpass_choice == 1 % Melody
+        Wn = [150 4000]/(Fs/2); % 通過帯域を表すベクトル。0Hzが0、(Fs/2)Hzが1となるようスケーリング
         fil = fir1(width_result, Wn ,'bandpass'); % バンドパスフィルタの設計
         merge_starttime_filtered = filter(fil, 1, merge_starttime);
-    elseif bandpass_choice == 2 % Rhythm・80-4000Hzをストップ
-        Wn = [80 4000 width_result]/(Fs/2); % 通過帯域を表すベクトル。0Hzが0、(Fs/2)Hzが1となるようスケーリング
-        fil = fir1(width_result, Wn ,'DC-0'); % バンドストップフィルタの設計
+    elseif bandpass_choice == 2 % Rhythm
+        Wn = [80 4000]/(Fs/2); % 阻止帯域を表すベクトル。0Hzが0、(Fs/2)Hzが1となるようスケーリング
+        fil = fir1(width_result, Wn ,'stop'); % バンドストップフィルタの設計
         merge_starttime_filtered = filter(fil, 1, merge_starttime);
-    elseif bandpass_choice == 3 % Harmony・80-300Hzを通過
+    elseif bandpass_choice == 3 % Harmony
         Wn = [80 300]/(Fs/2); % 通過帯域を表すベクトル。0Hzが0、(Fs/2)Hzが1となるようスケーリング
         fil = fir1(width_result, Wn ,'bandpass'); % バンドパスフィルタの設計
         merge_starttime_filtered = filter(fil, 1, merge_starttime);
