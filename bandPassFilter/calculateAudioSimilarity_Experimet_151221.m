@@ -10,19 +10,28 @@
 
 %% -----実験用自動出力プログラム-----
 genreName = input('Genre Name (with single quote): ');
-bandpass_choice = menu('楽曲のどの部分を比較対象としたいですか？ | Which sections do you want to compare?','メロディ | Melody','リズム | Rhythm', 'ハーモニー | Harmony');
+% bandpass_choice = menu('楽曲のどの部分を比較対象としたいですか？ | Which sections do you want to compare?','メロディ | Melody','リズム | Rhythm', 'ハーモニー | Harmony');
+bandpass_choice = 2; %Rhythm固定
+
 % forループの回数だけ計量を繰り返す
-for filecount = 0 : 9
-    
+for filecount = 0 : 9    
     % 分析対象とする楽曲の選択
     dpath_yourMusic = ['/Users/K1/Documents/MATLAB/Audio/AudioFiles/genres/' genreName '/'];
-    fname_yourMusic = [genreName '.0000' int2str(filecount) '.wav'];
+    if filecount < 10
+        fname_yourMusic = [genreName '.0000' int2str(filecount) '.wav'];
+    else
+        fname_yourMusic = [genreName '.000' int2str(filecount) '.wav'];
+    end
     % [fname_yourMusic, dpath_yourMusic]  =  uigetfile({'*.wav;*.mp3;*.au','Audio File(*.wav,*.mp3,*.au)'},'分析対象とする楽曲を選択してください。 | Open Audio File you want to use as reference.');
     % genre_choice_str = {'blues','classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock'};
     % genre_choice_yourMusic = menu('楽曲のジャンルを選択してください。 | What genre is this music?','blues','classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock');
 
     % 分析対象とする楽曲のメタタグ入力
-    yourMusicTitle = [genreName '.0000' int2str(filecount)];
+    if filecount < 10
+        yourMusicTitle = [genreName '.0000' int2str(filecount)];
+    else
+        yourMusicTitle = [genreName '.000' int2str(filecount)];
+    end
     yourMusicArtist = 'genres';
     % yourMusicTitle = input('Song Title (with single quote): ');
     % yourMusicArtist = input('Artist (with single quote): ');
@@ -35,11 +44,11 @@ for filecount = 0 : 9
     [y_yourMusic, yourMusic, bpm_yourMusic] = audioToMatrix(fname_yourMusic, dpath_yourMusic, 4, bandpass_choice);
 
     % 分析対象とする楽曲のプロット
-    figure;
-    subplot(2, 1, 1);
-    plot(y_yourMusic(:, 1));
-    title([fname_yourMusic ' | ' bandpass_choice_str{bandpass_choice}]);
-    xlabel('Time (Seconds)');
+%     figure;
+%     subplot(2, 1, 1);
+%     plot(y_yourMusic(:, 1));
+%     title([fname_yourMusic ' | ' bandpass_choice_str{bandpass_choice}]);
+%     xlabel('Time (Seconds)');
 
     % %% -----分析対象とする楽曲を取得・変換・プロット-----
     % % 分析対象とする楽曲の選択
@@ -69,15 +78,16 @@ for filecount = 0 : 9
     % サンプル音楽ディレクトリの選択
     % dpath_sampleMusic  =  uigetdir;
     % dpath_sampleMusic = [dpath_sampleMusic '/'];
-    bandpass_choice_str_cakewalk = {'vocal', 'drum', 'bass'};
-    dpath_sampleMusic = ['/Users/K1/Documents/MATLAB/Audio/AudioFiles/experiment/cakewalk/' bandpass_choice_str_cakewalk{bandpass_choice} '/'];
+%     bandpass_choice_str_cakewalk = {'vocal', 'drum', 'bass'};
+%     dpath_sampleMusic = ['/Users/K1/Documents/MATLAB/Audio/AudioFiles/experiment/cakewalk/' bandpass_choice_str_cakewalk{bandpass_choice} '/'];
+    dpath_sampleMusic = '/Users/K1/Documents/MATLAB/Audio/AudioFiles/experiment/cakewalk/drum_hiphop_jazz_pop_rock/';
     sampleMusicDataset = 'Cakewalk';
     % sampleMusicDataset = input('Dataset Name: '); % データセット名入力
     D = dir([dpath_sampleMusic '*.wav']); % wavファイル検索
     fname_sampleMusic = cell(1, length(D)); % 凡例用セル配列を作成
     similarity = cell(1, length(D)); % 類似度用テンポラリセル配列
     result = cell(length(D), 200); %　結果用セル配列, col1-5: メタ情報, col6-195: 類似度
-    wb = waitbar(0,'Please wait...'); % 進行状況の表示
+%     wb = waitbar(0,'Please wait...'); % 進行状況の表示
 
     % サンプル音楽ディレクトリ内のwavファイルそれぞれについて、FFT・マトリクス化・類似度計量・プロット
     for k = 1 : length(D)
@@ -107,23 +117,23 @@ for filecount = 0 : 9
         end
 
         % 類似度のプロット(1)
-        subplot(2, 1,2);
-        plot(similarity{k}(1:length(similarity{k}) - 1), '-x')
-        xlim([1.0, length(yourMusic(:, 1)) + 1]);
-        ylim([0.0, 1.0]);
-        hold all;
+%         subplot(2, 1,2);
+%         plot(similarity{k}(1:length(similarity{k}) - 1), '-x')
+%         xlim([1.0, length(yourMusic(:, 1)) + 1]);
+%         ylim([0.0, 1.0]);
+%         hold all;
 
-        waitbar(k / length(D)) % 進行状況の表示
+%         waitbar(k / length(D)) % 進行状況の表示
     end
 
     % 類似度のプロット(2)
-    title(['Time series variation of similarities | ' fname_yourMusic]);
-    xlabel('Time (bars)');
-    ylabel('Similarity');
-    legend(fname_sampleMusic);
-    grid minor;
-    hold off;
-    close(wb) % 進行状況の非表示
+%     title(['Time series variation of similarities | ' fname_yourMusic]);
+%     xlabel('Time (bars)');
+%     ylabel('Similarity');
+%     legend(fname_sampleMusic);
+%     grid minor;
+%     hold off;
+%     close(wb) % 進行状況の非表示
 
 
     %% -----結果用セル配列のテーブル化およびcsv書き出し-----

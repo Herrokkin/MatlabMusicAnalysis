@@ -38,5 +38,6 @@ for k = 1 : lengthYourMusic - lengthSrcMusic + 1
         similarity(1, k) = 0;
     end
 end
+% similarity = similarity / mean(similarity); % •½‹Ï‚ÅŠ„‚é
 % similarity(lengthYourMusic - lengthSrcMusic + 1 + 1,1) = sum(similarity > 0.30);
 end
