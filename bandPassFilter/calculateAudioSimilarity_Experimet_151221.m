@@ -1,32 +1,32 @@
 %function [] = calculateAudioSimilarity()
 
-%% ----------n¬ß‚²‚Æ‚Ì“ª1•b‚Ì‚İ‚ğæ‚èo‚µA‘ŠŠÖ—Ê‚ğŒv—Ê‚·‚éƒvƒƒOƒ‰ƒ€----------
-% -----g—p‚·‚éŠÖ”-----
-% 1)ƒI[ƒfƒBƒIƒf[ƒ^‚ğFFTEƒ}ƒgƒŠƒNƒX‰»
+%% ----------nå°ç¯€ã”ã¨ã®é ­1ç§’ã®ã¿ã‚’å–ã‚Šå‡ºã—ã€ç›¸é–¢é‡ã‚’è¨ˆé‡ã™ã‚‹ãƒ—ãƒ­ã‚°ãƒ©ãƒ ----------
+% -----ä½¿ç”¨ã™ã‚‹é–¢æ•°-----
+% 1)ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªãƒ‡ãƒ¼ã‚¿ã‚’FFTãƒ»ãƒãƒˆãƒªã‚¯ã‚¹åŒ–
 % [y, result, bpm] = audioToMatrix(fname, dpath, beats)
 %
-% 2)ƒRƒTƒCƒ“—Ş—“xŒv—Ê
+% 2)ã‚³ã‚µã‚¤ãƒ³é¡ä¼¼åº¦è¨ˆé‡
 % similarity{} = calculateCosineSimilarity(yourMusic, sampleMusic)
 
-%% -----ÀŒ±—p©“®o—ÍƒvƒƒOƒ‰ƒ€-----
+%% -----å®Ÿé¨“ç”¨è‡ªå‹•å‡ºåŠ›ãƒ—ãƒ­ã‚°ãƒ©ãƒ -----
 genreName = input('Genre Name (with single quote): ');
-% bandpass_choice = menu('Šy‹È‚Ì‚Ç‚Ì•”•ª‚ğ”äŠr‘ÎÛ‚Æ‚µ‚½‚¢‚Å‚·‚©H | Which sections do you want to compare?','ƒƒƒfƒB | Melody','ƒŠƒYƒ€ | Rhythm', 'ƒn[ƒ‚ƒj[ | Harmony');
-bandpass_choice = 2; %RhythmŒÅ’è
+% bandpass_choice = menu('æ¥½æ›²ã®ã©ã®éƒ¨åˆ†ã‚’æ¯”è¼ƒå¯¾è±¡ã¨ã—ãŸã„ã§ã™ã‹ï¼Ÿ | Which sections do you want to compare?','ãƒ¡ãƒ­ãƒ‡ã‚£ | Melody','ãƒªã‚ºãƒ  | Rhythm', 'ãƒãƒ¼ãƒ¢ãƒ‹ãƒ¼ | Harmony');
+bandpass_choice = 2; %Rhythmå›ºå®š
 
-% forƒ‹[ƒv‚Ì‰ñ”‚¾‚¯Œv—Ê‚ğŒJ‚è•Ô‚·
-for filecount = 0 : 9    
-    % •ªÍ‘ÎÛ‚Æ‚·‚éŠy‹È‚Ì‘I‘ğ
+% forãƒ«ãƒ¼ãƒ—ã®å›æ•°ã ã‘è¨ˆé‡ã‚’ç¹°ã‚Šè¿”ã™
+for filecount = 20 : 29    
+    % åˆ†æå¯¾è±¡ã¨ã™ã‚‹æ¥½æ›²ã®é¸æŠ
     dpath_yourMusic = ['/Users/K1/Documents/MATLAB/Audio/AudioFiles/genres/' genreName '/'];
     if filecount < 10
         fname_yourMusic = [genreName '.0000' int2str(filecount) '.wav'];
     else
         fname_yourMusic = [genreName '.000' int2str(filecount) '.wav'];
     end
-    % [fname_yourMusic, dpath_yourMusic]  =  uigetfile({'*.wav;*.mp3;*.au','Audio File(*.wav,*.mp3,*.au)'},'•ªÍ‘ÎÛ‚Æ‚·‚éŠy‹È‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢B | Open Audio File you want to use as reference.');
+    % [fname_yourMusic, dpath_yourMusic]  =  uigetfile({'*.wav;*.mp3;*.au','Audio File(*.wav,*.mp3,*.au)'},'åˆ†æå¯¾è±¡ã¨ã™ã‚‹æ¥½æ›²ã‚’é¸æŠã—ã¦ãã ã•ã„ã€‚ | Open Audio File you want to use as reference.');
     % genre_choice_str = {'blues','classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock'};
-    % genre_choice_yourMusic = menu('Šy‹È‚ÌƒWƒƒƒ“ƒ‹‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢B | What genre is this music?','blues','classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock');
+    % genre_choice_yourMusic = menu('æ¥½æ›²ã®ã‚¸ãƒ£ãƒ³ãƒ«ã‚’é¸æŠã—ã¦ãã ã•ã„ã€‚ | What genre is this music?','blues','classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock');
 
-    % •ªÍ‘ÎÛ‚Æ‚·‚éŠy‹È‚Ìƒƒ^ƒ^ƒO“ü—Í
+    % åˆ†æå¯¾è±¡ã¨ã™ã‚‹æ¥½æ›²ã®ãƒ¡ã‚¿ã‚¿ã‚°å…¥åŠ›
     if filecount < 10
         yourMusicTitle = [genreName '.0000' int2str(filecount)];
     else
@@ -36,72 +36,72 @@ for filecount = 0 : 9
     % yourMusicTitle = input('Song Title (with single quote): ');
     % yourMusicArtist = input('Artist (with single quote): ');
 
-    % ƒoƒ“ƒhƒpƒXƒtƒBƒ‹ƒ^—pƒZƒŒƒNƒgƒ{ƒbƒNƒX
+    % ãƒãƒ³ãƒ‰ãƒ‘ã‚¹ãƒ•ã‚£ãƒ«ã‚¿ç”¨ã‚»ãƒ¬ã‚¯ãƒˆãƒœãƒƒã‚¯ã‚¹
     bandpass_choice_str = {'Melody', 'Rhythm', 'Harmony'};
-    % bandpass_choice = menu('Šy‹È‚Ì‚Ç‚Ì•”•ª‚ğ”äŠr‘ÎÛ‚Æ‚µ‚½‚¢‚Å‚·‚©H | Which sections do you want to compare?','ƒƒƒfƒB | Melody','ƒŠƒYƒ€ | Rhythm', 'ƒn[ƒ‚ƒj[ | Harmony');
+    % bandpass_choice = menu('æ¥½æ›²ã®ã©ã®éƒ¨åˆ†ã‚’æ¯”è¼ƒå¯¾è±¡ã¨ã—ãŸã„ã§ã™ã‹ï¼Ÿ | Which sections do you want to compare?','ãƒ¡ãƒ­ãƒ‡ã‚£ | Melody','ãƒªã‚ºãƒ  | Rhythm', 'ãƒãƒ¼ãƒ¢ãƒ‹ãƒ¼ | Harmony');
 
-    % •ªÍ‘ÎÛ‚Æ‚·‚éŠy‹È‚ğFFTEƒ}ƒgƒŠƒNƒX‰»
+    % åˆ†æå¯¾è±¡ã¨ã™ã‚‹æ¥½æ›²ã‚’FFTãƒ»ãƒãƒˆãƒªã‚¯ã‚¹åŒ–
     [y_yourMusic, yourMusic, bpm_yourMusic] = audioToMatrix(fname_yourMusic, dpath_yourMusic, 4, bandpass_choice);
 
-    % •ªÍ‘ÎÛ‚Æ‚·‚éŠy‹È‚Ìƒvƒƒbƒg
+    % åˆ†æå¯¾è±¡ã¨ã™ã‚‹æ¥½æ›²ã®ãƒ—ãƒ­ãƒƒãƒˆ
 %     figure;
 %     subplot(2, 1, 1);
 %     plot(y_yourMusic(:, 1));
 %     title([fname_yourMusic ' | ' bandpass_choice_str{bandpass_choice}]);
 %     xlabel('Time (Seconds)');
 
-    % %% -----•ªÍ‘ÎÛ‚Æ‚·‚éŠy‹È‚ğæ“¾E•ÏŠ·Eƒvƒƒbƒg-----
-    % % •ªÍ‘ÎÛ‚Æ‚·‚éŠy‹È‚Ì‘I‘ğ
-    % [fname_yourMusic, dpath_yourMusic]  =  uigetfile({'*.wav;*.mp3;*.au','Audio File(*.wav,*.mp3,*.au)'},'•ªÍ‘ÎÛ‚Æ‚·‚éŠy‹È‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢B | Open Audio File you want to use as reference.');
+    % %% -----åˆ†æå¯¾è±¡ã¨ã™ã‚‹æ¥½æ›²ã‚’å–å¾—ãƒ»å¤‰æ›ãƒ»ãƒ—ãƒ­ãƒƒãƒˆ-----
+    % % åˆ†æå¯¾è±¡ã¨ã™ã‚‹æ¥½æ›²ã®é¸æŠ
+    % [fname_yourMusic, dpath_yourMusic]  =  uigetfile({'*.wav;*.mp3;*.au','Audio File(*.wav,*.mp3,*.au)'},'åˆ†æå¯¾è±¡ã¨ã™ã‚‹æ¥½æ›²ã‚’é¸æŠã—ã¦ãã ã•ã„ã€‚ | Open Audio File you want to use as reference.');
     % % genre_choice_str = {'blues','classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock'};
-    % % genre_choice_yourMusic = menu('Šy‹È‚ÌƒWƒƒƒ“ƒ‹‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢B | What genre is this music?','blues','classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock');
+    % % genre_choice_yourMusic = menu('æ¥½æ›²ã®ã‚¸ãƒ£ãƒ³ãƒ«ã‚’é¸æŠã—ã¦ãã ã•ã„ã€‚ | What genre is this music?','blues','classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock');
     % 
-    % % •ªÍ‘ÎÛ‚Æ‚·‚éŠy‹È‚Ìƒƒ^ƒ^ƒO“ü—Í
+    % % åˆ†æå¯¾è±¡ã¨ã™ã‚‹æ¥½æ›²ã®ãƒ¡ã‚¿ã‚¿ã‚°å…¥åŠ›
     % yourMusicTitle = input('Song Title (with single quote): ');
     % yourMusicArtist = input('Artist (with single quote): ');
     % 
-    % % ƒoƒ“ƒhƒpƒXƒtƒBƒ‹ƒ^—pƒZƒŒƒNƒgƒ{ƒbƒNƒX
+    % % ãƒãƒ³ãƒ‰ãƒ‘ã‚¹ãƒ•ã‚£ãƒ«ã‚¿ç”¨ã‚»ãƒ¬ã‚¯ãƒˆãƒœãƒƒã‚¯ã‚¹
     % bandpass_choice_str = {'Melody', 'Rhythm', 'Harmony'};
-    % bandpass_choice = menu('Šy‹È‚Ì‚Ç‚Ì•”•ª‚ğ”äŠr‘ÎÛ‚Æ‚µ‚½‚¢‚Å‚·‚©H | Which sections do you want to compare?','ƒƒƒfƒB | Melody','ƒŠƒYƒ€ | Rhythm', 'ƒn[ƒ‚ƒj[ | Harmony');
+    % bandpass_choice = menu('æ¥½æ›²ã®ã©ã®éƒ¨åˆ†ã‚’æ¯”è¼ƒå¯¾è±¡ã¨ã—ãŸã„ã§ã™ã‹ï¼Ÿ | Which sections do you want to compare?','ãƒ¡ãƒ­ãƒ‡ã‚£ | Melody','ãƒªã‚ºãƒ  | Rhythm', 'ãƒãƒ¼ãƒ¢ãƒ‹ãƒ¼ | Harmony');
     % 
-    % % •ªÍ‘ÎÛ‚Æ‚·‚éŠy‹È‚ğFFTEƒ}ƒgƒŠƒNƒX‰»
+    % % åˆ†æå¯¾è±¡ã¨ã™ã‚‹æ¥½æ›²ã‚’FFTãƒ»ãƒãƒˆãƒªã‚¯ã‚¹åŒ–
     % [y_yourMusic, yourMusic, bpm_yourMusic] = audioToMatrix(fname_yourMusic, dpath_yourMusic, 4, bandpass_choice);
     % 
-    % % •ªÍ‘ÎÛ‚Æ‚·‚éŠy‹È‚Ìƒvƒƒbƒg
+    % % åˆ†æå¯¾è±¡ã¨ã™ã‚‹æ¥½æ›²ã®ãƒ—ãƒ­ãƒƒãƒˆ
     % figure;
     % subplot(2, 1, 1);
     % plot(y_yourMusic(:, 1));
     % title([fname_yourMusic ' | ' bandpass_choice_str{bandpass_choice}]);
     % xlabel('Time (Seconds)');
 
-    %% -----ƒTƒ“ƒvƒ‹‰¹ŠyƒfƒBƒŒƒNƒgƒŠ‚Ì‘I‘ğEæ“¾E•ÏŠ·EƒRƒTƒCƒ“—Ş—“xŒv—ÊEƒvƒƒbƒg-----
-    % ƒTƒ“ƒvƒ‹‰¹ŠyƒfƒBƒŒƒNƒgƒŠ‚Ì‘I‘ğ
+    %% -----ã‚µãƒ³ãƒ—ãƒ«éŸ³æ¥½ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®é¸æŠãƒ»å–å¾—ãƒ»å¤‰æ›ãƒ»ã‚³ã‚µã‚¤ãƒ³é¡ä¼¼åº¦è¨ˆé‡ãƒ»ãƒ—ãƒ­ãƒƒãƒˆ-----
+    % ã‚µãƒ³ãƒ—ãƒ«éŸ³æ¥½ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®é¸æŠ
     % dpath_sampleMusic  =  uigetdir;
     % dpath_sampleMusic = [dpath_sampleMusic '/'];
 %     bandpass_choice_str_cakewalk = {'vocal', 'drum', 'bass'};
 %     dpath_sampleMusic = ['/Users/K1/Documents/MATLAB/Audio/AudioFiles/experiment/cakewalk/' bandpass_choice_str_cakewalk{bandpass_choice} '/'];
     dpath_sampleMusic = '/Users/K1/Documents/MATLAB/Audio/AudioFiles/experiment/cakewalk/drum_hiphop_jazz_pop_rock/';
     sampleMusicDataset = 'Cakewalk';
-    % sampleMusicDataset = input('Dataset Name: '); % ƒf[ƒ^ƒZƒbƒg–¼“ü—Í
-    D = dir([dpath_sampleMusic '*.wav']); % wavƒtƒ@ƒCƒ‹ŒŸõ
-    fname_sampleMusic = cell(1, length(D)); % –}—á—pƒZƒ‹”z—ñ‚ğì¬
-    similarity = cell(1, length(D)); % —Ş—“x—pƒeƒ“ƒ|ƒ‰ƒŠƒZƒ‹”z—ñ
-    result = cell(length(D), 200); %@Œ‹‰Ê—pƒZƒ‹”z—ñ, col1-5: ƒƒ^î•ñ, col6-195: —Ş—“x
-%     wb = waitbar(0,'Please wait...'); % isó‹µ‚Ì•\¦
+    % sampleMusicDataset = input('Dataset Name: '); % ãƒ‡ãƒ¼ã‚¿ã‚»ãƒƒãƒˆåå…¥åŠ›
+    D = dir([dpath_sampleMusic '*.wav']); % wavãƒ•ã‚¡ã‚¤ãƒ«æ¤œç´¢
+    fname_sampleMusic = cell(1, length(D)); % å‡¡ä¾‹ç”¨ã‚»ãƒ«é…åˆ—ã‚’ä½œæˆ
+    similarity = cell(1, length(D)); % é¡ä¼¼åº¦ç”¨ãƒ†ãƒ³ãƒãƒ©ãƒªã‚»ãƒ«é…åˆ—
+    result = cell(length(D), 200); %ã€€çµæœç”¨ã‚»ãƒ«é…åˆ—, col1-5: ãƒ¡ã‚¿æƒ…å ±, col6-195: é¡ä¼¼åº¦
+%     wb = waitbar(0,'Please wait...'); % é€²è¡ŒçŠ¶æ³ã®è¡¨ç¤º
 
-    % ƒTƒ“ƒvƒ‹‰¹ŠyƒfƒBƒŒƒNƒgƒŠ“à‚Ìwavƒtƒ@ƒCƒ‹‚»‚ê‚¼‚ê‚É‚Â‚¢‚ÄAFFTEƒ}ƒgƒŠƒNƒX‰»E—Ş—“xŒv—ÊEƒvƒƒbƒg
+    % ã‚µãƒ³ãƒ—ãƒ«éŸ³æ¥½ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªå†…ã®wavãƒ•ã‚¡ã‚¤ãƒ«ãã‚Œãã‚Œã«ã¤ã„ã¦ã€FFTãƒ»ãƒãƒˆãƒªã‚¯ã‚¹åŒ–ãƒ»é¡ä¼¼åº¦è¨ˆé‡ãƒ»ãƒ—ãƒ­ãƒƒãƒˆ
     for k = 1 : length(D)
-        % ƒTƒ“ƒvƒ‹‘¤ƒ}ƒgƒŠƒNƒX‚Ìì¬
-        [~,name_sampleMusic,ext_sampleMusic] = fileparts(D(k).name); %ƒpƒXAƒtƒ@ƒCƒ‹–¼AŠg’£q‚Ìæ“¾
-        fname_sampleMusic{k} = strcat(name_sampleMusic, ext_sampleMusic); %ƒtƒ@ƒCƒ‹–¼‚ÆŠg’£q‚ğŒ‹‡
-        % ƒ}ƒgƒŠƒNƒXæ“¾
-        [~, matrix_sampleMusic, ~] = audioToMatrix(fname_sampleMusic{k}, dpath_sampleMusic, 4, bandpass_choice);
+        % ã‚µãƒ³ãƒ—ãƒ«å´ãƒãƒˆãƒªã‚¯ã‚¹ã®ä½œæˆ
+        [â€¾,name_sampleMusic,ext_sampleMusic] = fileparts(D(k).name); %ãƒ‘ã‚¹ã€ãƒ•ã‚¡ã‚¤ãƒ«åã€æ‹¡å¼µå­ã®å–å¾—
+        fname_sampleMusic{k} = strcat(name_sampleMusic, ext_sampleMusic); %ãƒ•ã‚¡ã‚¤ãƒ«åã¨æ‹¡å¼µå­ã‚’çµåˆ
+        % ãƒãƒˆãƒªã‚¯ã‚¹å–å¾—
+        [â€¾, matrix_sampleMusic, â€¾] = audioToMatrix(fname_sampleMusic{k}, dpath_sampleMusic, 4, bandpass_choice);
 
-        % ƒRƒTƒCƒ“—Ş—“xŒvZ
+        % ã‚³ã‚µã‚¤ãƒ³é¡ä¼¼åº¦è¨ˆç®—
         similarity{k} = calculateCosineSimilarity(yourMusic, matrix_sampleMusic);
 
-        % Œ‹‰Ê—pƒZƒ‹”z—ñ‚Ìƒf[ƒ^–„‚ß‚İ
-        % col1-5: ƒƒ^î•ñ, col6-195: —Ş—“x
+        % çµæœç”¨ã‚»ãƒ«é…åˆ—ã®ãƒ‡ãƒ¼ã‚¿åŸ‹ã‚è¾¼ã¿
+        % col1-5: ãƒ¡ã‚¿æƒ…å ±, col6-195: é¡ä¼¼åº¦
         % Title, Artist, DatasetName, Part, Filename, Sim001, ..., sim195
         result{k, 1} = yourMusicTitle;
         result{k, 2} = yourMusicArtist;
@@ -109,38 +109,38 @@ for filecount = 0 : 9
         result{k, 4} = bandpass_choice_str{bandpass_choice};
         result{k, 5} = fname_sampleMusic{k};
         for result_index = 1 : length(similarity{k}(1, :))
-            result{k, result_index + 5} = similarity{k}(1, result_index); % col6-195: —Ş—“x–„‚ß‚İ
-            % col(last)-col195‚ğ0‚ÉŒÅ’èB
+            result{k, result_index + 5} = similarity{k}(1, result_index); % col6-195: é¡ä¼¼åº¦åŸ‹ã‚è¾¼ã¿
+            % col(last)-col195ã‚’0ã«å›ºå®šã€‚
             if length(similarity{k}(1, :)) + 5 + result_index <= 200
                 result{k, length(similarity{k}(1, :)) + 5 + result_index} = 0;
             end
         end
 
-        % —Ş—“x‚Ìƒvƒƒbƒg(1)
+        % é¡ä¼¼åº¦ã®ãƒ—ãƒ­ãƒƒãƒˆ(1)
 %         subplot(2, 1,2);
 %         plot(similarity{k}(1:length(similarity{k}) - 1), '-x')
 %         xlim([1.0, length(yourMusic(:, 1)) + 1]);
 %         ylim([0.0, 1.0]);
 %         hold all;
 
-%         waitbar(k / length(D)) % isó‹µ‚Ì•\¦
+%         waitbar(k / length(D)) % é€²è¡ŒçŠ¶æ³ã®è¡¨ç¤º
     end
 
-    % —Ş—“x‚Ìƒvƒƒbƒg(2)
+    % é¡ä¼¼åº¦ã®ãƒ—ãƒ­ãƒƒãƒˆ(2)
 %     title(['Time series variation of similarities | ' fname_yourMusic]);
 %     xlabel('Time (bars)');
 %     ylabel('Similarity');
 %     legend(fname_sampleMusic);
 %     grid minor;
 %     hold off;
-%     close(wb) % isó‹µ‚Ì”ñ•\¦
+%     close(wb) % é€²è¡ŒçŠ¶æ³ã®éè¡¨ç¤º
 
 
-    %% -----Œ‹‰Ê—pƒZƒ‹”z—ñ‚Ìƒe[ƒuƒ‹‰»‚¨‚æ‚Ñcsv‘‚«o‚µ-----
+    %% -----çµæœç”¨ã‚»ãƒ«é…åˆ—ã®ãƒ†ãƒ¼ãƒ–ãƒ«åŒ–ãŠã‚ˆã³csvæ›¸ãå‡ºã—-----
     resultTable = cell2table(result);
     writetable(resultTable,['similarities_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.csv']);
 
-    %% -----Å‘å’l‚ÌƒWƒƒƒ“ƒ‹Œ‹‰Ê‚ğ1—ñ‚É•\¦-----
+    %% -----æœ€å¤§å€¤ã®ã‚¸ãƒ£ãƒ³ãƒ«çµæœã‚’1åˆ—ã«è¡¨ç¤º-----
     genreOneRow = [];
     for m = 6:200
         max_tmp = 0;

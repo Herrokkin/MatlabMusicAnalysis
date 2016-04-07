@@ -1,35 +1,35 @@
 function [similarity] = calculateCosineSimilarity(yourMusic, srcMusic)
-%‚»‚ê‚¼‚ê‚Ìs”æ“¾
+%ãã‚Œãã‚Œã®è¡Œæ•°å–å¾—
 lengthYourMusic = length(yourMusic(:,1));
 lengthSrcMusic = length(srcMusic(:,1));
 
-%ŒvZü”g”w’è
+%è¨ˆç®—å‘¨æ³¢æ•°æŒ‡å®š
 lowFrequency = 1;
 highFrequency = 10000;
 
-%Šes‚²‚Æ‚É^—‚µ‚½‚¢‘¤ƒmƒ‹ƒ€‚Ìì¬
+%å„è¡Œã”ã¨ã«çœŸä¼¼ã—ãŸã„å´ãƒãƒ«ãƒ ã®ä½œæˆ
 normYourMusic = zeros(lengthYourMusic, 1);
 for countNormYourMusic = 1 : lengthYourMusic
-    normYourMusic(countNormYourMusic,1) = norm(yourMusic(countNormYourMusic, lowFrequency:highFrequency)); %lowFrequency-highFrequency(Hz)‚Ì‚İŒvZ‘ÎÛ
+    normYourMusic(countNormYourMusic,1) = norm(yourMusic(countNormYourMusic, lowFrequency:highFrequency)); %lowFrequency-highFrequency(Hz)ã®ã¿è¨ˆç®—å¯¾è±¡
 end
 
-%Šes‚²‚Æ‚ÉƒTƒ“ƒvƒ‹‘¤ƒmƒ‹ƒ€‚Ìì¬
+%å„è¡Œã”ã¨ã«ã‚µãƒ³ãƒ—ãƒ«å´ãƒãƒ«ãƒ ã®ä½œæˆ
 normSrcMusic = zeros(lengthSrcMusic, 1);
 for countNormSrcMusic = 1 : lengthSrcMusic
-    normSrcMusic(countNormSrcMusic,1) = norm(srcMusic(countNormSrcMusic, lowFrequency:highFrequency)); %lowFrequency-highFrequency(Hz)‚Ì‚İŒvZ‘ÎÛ
+    normSrcMusic(countNormSrcMusic,1) = norm(srcMusic(countNormSrcMusic, lowFrequency:highFrequency)); %lowFrequency-highFrequency(Hz)ã®ã¿è¨ˆç®—å¯¾è±¡
 end
 
-%‚¸‚ç‚µ‚È‚ª‚çƒRƒTƒCƒ“—Ş—“xZo
+%ãšã‚‰ã—ãªãŒã‚‰ã‚³ã‚µã‚¤ãƒ³é¡ä¼¼åº¦ç®—å‡º
 similarityTmp = zeros(lengthSrcMusic, 1, lengthYourMusic - lengthSrcMusic + 1);
 for i = 1 : lengthYourMusic - lengthSrcMusic + 1
     for j = 1 : lengthSrcMusic
-        %•b‚²‚Æ‚É‘½ŸŒ³”z—ñ‰»
-        similarityTmp(j,1,i) = (dot(yourMusic(i+j-1, lowFrequency:highFrequency), srcMusic(j, lowFrequency:highFrequency))) / (normYourMusic(i+j-1,1) * normSrcMusic(j,1)); %lowFrequency-highFrequency(Hz)‚Ì‚İŒvZ‘ÎÛ
+        %ç§’ã”ã¨ã«å¤šæ¬¡å…ƒé…åˆ—åŒ–
+        similarityTmp(j,1,i) = (dot(yourMusic(i+j-1, lowFrequency:highFrequency), srcMusic(j, lowFrequency:highFrequency))) / (normYourMusic(i+j-1,1) * normSrcMusic(j,1)); %lowFrequency-highFrequency(Hz)ã®ã¿è¨ˆç®—å¯¾è±¡
     end
 end
 
-%k‚É‚¨‚¯‚é—Ş—“x‚ÍAk+lengthSrcMusic‚Ü‚Å‚Ì—Ş—“x‚Ì•½‹Ï
-%‘æ1s‚É‚ÍAè‡’l’´‚¦ƒJƒEƒ“ƒg‚ğŠi”[‚·‚é‚½‚ßA+1B
+%æ™‚åˆ»kã«ãŠã‘ã‚‹é¡ä¼¼åº¦ã¯ã€k+lengthSrcMusicã¾ã§ã®é¡ä¼¼åº¦ã®å¹³å‡
+%ç¬¬1è¡Œã«ã¯ã€é–¾å€¤è¶…ãˆã‚«ã‚¦ãƒ³ãƒˆã‚’æ ¼ç´ã™ã‚‹ãŸã‚ã€+1ã€‚
 similarity = zeros(1, lengthYourMusic - lengthSrcMusic + 1 + 1);
 %similarity(1,1) = sum(similarityTmp(:,1,1)) / lengthSrcMusic;
 for k = 1 : lengthYourMusic - lengthSrcMusic + 1
@@ -38,6 +38,6 @@ for k = 1 : lengthYourMusic - lengthSrcMusic + 1
         similarity(1, k) = 0;
     end
 end
-% similarity = similarity / mean(similarity); % •½‹Ï‚ÅŠ„‚é
+% similarity = similarity / mean(similarity); % å¹³å‡ã§å‰²ã‚‹
 % similarity(lengthYourMusic - lengthSrcMusic + 1 + 1,1) = sum(similarity > 0.30);
 end

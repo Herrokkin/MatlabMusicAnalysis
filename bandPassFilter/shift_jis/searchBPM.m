@@ -1,56 +1,56 @@
 function [songBPM] = searchBPM(y, Fs)
-% %UIã§ãƒ•ã‚¡ã‚¤ãƒ«å–å¾—
+% %UI‚Åƒtƒ@ƒCƒ‹æ“¾
 % [fname, dpath]  =  uigetfile({'*.wav;*.mp3','Audio File(*.wav,*.mp3)'},'Open Audio File');
 % [y, Fs] = audioread(fullfile(dpath, fname));
 % 
-% %ã‚¹ãƒ†ãƒ¬ã‚ª/ãƒ¢ãƒãƒ©ãƒ«ã§åˆ†å²
-% if length(y(1,:)) == 2 %ã‚¹ãƒ†ãƒ¬ã‚ªæ™‚
-%     %merge = (y(:, 1) - y(:, 2)); %Sideæˆåˆ†=L-R
-%     merge = (y(:, 1) + y(:, 2)); %Midæˆåˆ†=L+R
-% elseif length(y(1,:)) == 1 %ãƒ¢ãƒãƒ©ãƒ«æ™‚
-%     merge = y(:, 1); %ãƒ¢ãƒãƒ©ãƒ«ã‚’ãã®ã¾ã¾ä½¿ç”¨
+% %ƒXƒeƒŒƒI/ƒ‚ƒmƒ‰ƒ‹‚Å•ªŠò
+% if length(y(1,:)) == 2 %ƒXƒeƒŒƒI
+%     %merge = (y(:, 1) - y(:, 2)); %Side¬•ª=L-R
+%     merge = (y(:, 1) + y(:, 2)); %Mid¬•ª=L+R
+% elseif length(y(1,:)) == 1 %ƒ‚ƒmƒ‰ƒ‹
+%     merge = y(:, 1); %ƒ‚ƒmƒ‰ƒ‹‚ğ‚»‚Ì‚Ü‚Üg—p
 % end
 
-%% ã“ã“ã‹ã‚‰BPMåˆ†å‰²
+%% ‚±‚±‚©‚çBPM•ªŠ„
 %http://ism1000ch.hatenablog.com/entry/2014/07/08/164124
 merge = y;
 sample_total = length(merge);
-ts = 1 / Fs; %ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°å‘¨æ³¢æ•°
+ts = 1 / Fs; %ƒTƒ“ƒvƒŠƒ“ƒOü”g”
 
-%ãƒ•ãƒ¬ãƒ¼ãƒ ã”ã¨ã®éŸ³é‡ãƒ‡ãƒ¼ã‚¿ä½œæˆ
-%ãƒ•ãƒ¬ãƒ¼ãƒ ã‚µã‚¤ã‚ºåˆ†ã®æŒ¯å¹…äºŒä¹—å’Œã‚’è¨ˆç®—
+%ƒtƒŒ[ƒ€‚²‚Æ‚Ì‰¹—Êƒf[ƒ^ì¬
+%ƒtƒŒ[ƒ€ƒTƒCƒY•ª‚ÌU•“ñæ˜a‚ğŒvZ
 frame_size = 512;
-sample_max = sample_total - rem(sample_total, frame_size); %ä½™ã‚Šãƒ•ãƒ¬ãƒ¼ãƒ ã¯åˆ‡ã‚Šæ¨ã¦ã‚‹
+sample_max = sample_total - rem(sample_total, frame_size); %—]‚èƒtƒŒ[ƒ€‚ÍØ‚èÌ‚Ä‚é
 frame_max = sample_max / frame_size;
-amp_list = []; %éŸ³é‡ãƒ‡ãƒ¼ã‚¿
+amp_list = []; %‰¹—Êƒf[ƒ^
 
 for x = 0 : frame_max - 1
     amp_list = horzcat(amp_list, sum(merge(x * frame_size + 1 : x * frame_size + frame_size ,1) .^2));
 end
 
-%éŸ³é‡ã®å¢—åŠ é‡ã‚’å–å¾—
-%è² å€¤ã¯0ã«ã™ã‚‹
+%‰¹—Ê‚Ì‘‰Á—Ê‚ğæ“¾
+%•‰’l‚Í0‚É‚·‚é
 amp_diff_list = diff(amp_list);
 amp_diff_list(1, find(amp_diff_list<=0)) = 0;
 
-%bpmæ¨å®š
+%bpm„’è
 %match_list = calc_all_match(amp_diff_list, Fs);
 match_list = zeros(1,59);
 %bpm_iter = 60:200;
 
-%å„BPMã§matchåº¦è¨ˆé‡
+%ŠeBPM‚Åmatch“xŒv—Ê
 for bpm = 60:200
     match = calc_match_bpm(amp_diff_list, Fs, bpm);
     match_list = horzcat(match_list, match);
 end
 
-% %ãƒ—ãƒ­ãƒƒãƒˆéƒ¨åˆ†
+% %ƒvƒƒbƒg•”•ª
 % plot(match_list)
 % title(['BPM | ' fname]);
 % xlim([60, 200]);
 % grid minor;
 
-%è¨ˆç®—ã—ãŸBPMã‚’return
+%ŒvZ‚µ‚½BPM‚ğreturn
 songBPM = find(match_list == max(match_list));
 
 end

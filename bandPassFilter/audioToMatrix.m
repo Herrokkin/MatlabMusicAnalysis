@@ -1,86 +1,86 @@
 function [merge_starttime_filtered, result, songBPM] = audioToMatrix(fname, dpath, frame_beats, bandpass_choice)
-% UI‚Åƒtƒ@ƒCƒ‹æ“¾
+% UIã§ãƒ•ã‚¡ã‚¤ãƒ«å–å¾—
 % [fname, dpath]  =  uigetfile({'*.wav;*.mp3','Audio File(*.wav,*.mp3)'},'Open Audio File');
 [y, Fs] = audioread(fullfile(dpath, fname));
 
 csvfilename = [dpath fname '_bpm.csv'];
-existcsv = exist(csvfilename, 'file'); % csv‚ª‘¶İ‚·‚é‚©”»’è
+existcsv = exist(csvfilename, 'file'); % csvãŒå­˜åœ¨ã™ã‚‹ã‹åˆ¤å®š
 
-if existcsv == 2 % csv‘¶İ‚·‚éê‡
+if existcsv == 2 % csvå­˜åœ¨ã™ã‚‹å ´åˆ
     result = csvread(csvfilename);
-else % csv‘¶İ‚µ‚È‚¢ê‡=>ƒt[ƒŠƒG•ÏŠ·
-    %% ƒXƒeƒŒƒI/ƒ‚ƒmƒ‰ƒ‹‚Å•ªŠò
-    % mergeF•Ï”y‚ğ1ƒ`ƒƒƒ“ƒlƒ‹‚ÌƒIƒuƒWƒFƒNƒg‚É’uŠ·‚¦‚½•Ï”
-    if length(y(1,:)) == 2 % ƒXƒeƒŒƒI
-        % merge = (y(:, 1) - y(:, 2)); % Side¬•ª=L-R
-        merge = (y(:, 1) + y(:, 2)); % Mid¬•ª=L+R
-    elseif length(y(1,:)) == 1 % ƒ‚ƒmƒ‰ƒ‹
-        merge = y(:, 1); % ƒ‚ƒmƒ‰ƒ‹‚ğ‚»‚Ì‚Ü‚Üg—p
+else % csvå­˜åœ¨ã—ãªã„å ´åˆ=>ãƒ•ãƒ¼ãƒªã‚¨å¤‰æ›
+    %% ã‚¹ãƒ†ãƒ¬ã‚ª/ãƒ¢ãƒãƒ©ãƒ«ã§åˆ†å²
+    % mergeï¼šå¤‰æ•°yã‚’1ãƒãƒ£ãƒ³ãƒãƒ«ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«ç½®æ›ãˆãŸå¤‰æ•°
+    if length(y(1,:)) == 2 % ã‚¹ãƒ†ãƒ¬ã‚ªæ™‚
+        % merge = (y(:, 1) - y(:, 2)); % Sideæˆåˆ†=L-R
+        merge = (y(:, 1) + y(:, 2)); % Midæˆåˆ†=L+R
+    elseif length(y(1,:)) == 1 % ãƒ¢ãƒãƒ©ãƒ«æ™‚
+        merge = y(:, 1); % ãƒ¢ãƒãƒ©ãƒ«ã‚’ãã®ã¾ã¾ä½¿ç”¨
     end
 
-    %% BPM„’è
+    %% BPMæ¨å®š
     songBPM = searchBPM(merge, Fs);
     
-    %% ƒvƒŠƒGƒ“ƒtƒ@ƒVƒX(‚ˆæ‹­’²)
-    pre_emphasis = 0.97; % ƒvƒŠƒGƒ“ƒtƒ@ƒVƒXŒW”
-    merge_high_emphasis = []; % merge_high_emphasisF‚ˆæ‹­’²Ï‚İ‰¹º‚Ì•Ï”
+    %% ãƒ—ãƒªã‚¨ãƒ³ãƒ•ã‚¡ã‚·ã‚¹(é«˜åŸŸå¼·èª¿)
+    pre_emphasis = 0.97; % ãƒ—ãƒªã‚¨ãƒ³ãƒ•ã‚¡ã‚·ã‚¹ä¿‚æ•°
+    merge_high_emphasis = []; % merge_high_emphasisï¼šé«˜åŸŸå¼·èª¿æ¸ˆã¿éŸ³å£°ã®å¤‰æ•°
     merge_high_emphasis(1) = merge(1);
     for countData = 2 : 1 : length(merge)
-        % ƒvƒŠƒGƒ“ƒtƒ@ƒVƒX
+        % ãƒ—ãƒªã‚¨ãƒ³ãƒ•ã‚¡ã‚·ã‚¹
         thisData = merge(countData) - (pre_emphasis * merge(countData - 1));
         merge_high_emphasis = [merge_high_emphasis; thisData];
     end
     
-    %% ”‚Ìæ“ª‚ğ„’è
-    peak_count_frame_size = 512; % ”‚Ìæ“ª‚ğŒ©‚Â‚¯‚éÎ‚ÌƒtƒŒ[ƒ€•
-    peak_count_frame_max = Fs * 0.5 / peak_count_frame_size; % Å‰‚Ìn•bŠÔ‚ğg—p
+    %% æ‹ã®å…ˆé ­ã‚’æ¨å®š
+    peak_count_frame_size = 512; % æ‹ã®å…ˆé ­ã‚’è¦‹ã¤ã‘ã‚‹æ­³ã®ãƒ•ãƒ¬ãƒ¼ãƒ å¹…
+    peak_count_frame_max = Fs * 0.5 / peak_count_frame_size; % æœ€åˆã®nç§’é–“ã‚’ä½¿ç”¨
     for peak_count = 1 : peak_count_frame_max - 1
         if sum(merge_high_emphasis((peak_count - 1) * peak_count_frame_size + 1 : (peak_count - 1) * peak_count_frame_size + peak_count_frame_size, 1)) .^2 <= sum(merge_high_emphasis(peak_count * peak_count_frame_size + 1 : peak_count * peak_count_frame_size + peak_count_frame_size, 1)) .^2 && sum(merge_high_emphasis(peak_count * peak_count_frame_size + 1 : peak_count * peak_count_frame_size + peak_count_frame_size, 1)) .^2 >= sum(merge_high_emphasis((peak_count + 1) * peak_count_frame_size + 1 : (peak_count + 1) * peak_count_frame_size + peak_count_frame_size, 1)) .^2
             peak_count_start = peak_count;
         end
     end
-    merge_starttime = merge_high_emphasis(peak_count_start * peak_count_frame_size : length(merge_high_emphasis),1); % merge_starttimeF”‚Ìæ“ª‚ğ„’è
+    merge_starttime = merge_high_emphasis(peak_count_start * peak_count_frame_size : length(merge_high_emphasis),1); % merge_starttimeï¼šæ‹ã®å…ˆé ­ã‚’æ¨å®š
     
-    %% FFT‘O€”õ
-    frame_length = floor(Fs / (songBPM / 60) * frame_beats); %ƒtƒŒ[ƒ€•BÅŒã‚ÉŠ|‚¯‚é‚Ì‚Ì‚Íƒr[ƒg”
-    N = floor(length(merge_starttime) / frame_length); %Šy‹È€ƒtƒŒ[ƒ€•
-    width_result = 22050; %ƒTƒ“ƒvƒŠƒ“ƒO’·BFs‚¾‚Æ‚ŸŒ³‚Ìˆ×A¬‚³‚ß‚ÉB
-    result = zeros(N, width_result); %•Ô‚è’lİ’è
-    window = hamming(width_result); %ƒnƒ~ƒ“ƒO‘‹İ’è
+    %% FFTå‰æº–å‚™
+    frame_length = floor(Fs / (songBPM / 60) * frame_beats); %ãƒ•ãƒ¬ãƒ¼ãƒ å¹…ã€‚æœ€å¾Œã«æ›ã‘ã‚‹ã®ã®ã¯ãƒ“ãƒ¼ãƒˆæ•°
+    N = floor(length(merge_starttime) / frame_length); %æ¥½æ›²Ã·ãƒ•ãƒ¬ãƒ¼ãƒ å¹…
+    width_result = 22050; %ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°é•·ã€‚Fsã ã¨é«˜æ¬¡å…ƒã®ç‚ºã€å°ã•ã‚ã«ã€‚
+    result = zeros(N, width_result); %è¿”ã‚Šå€¤è¨­å®š
+    window = hamming(width_result); %ãƒãƒŸãƒ³ã‚°çª“è¨­å®š
     
-    %% ‘ÑˆæƒtƒBƒ‹ƒ^
-    % Œ»ó‚ÍƒƒƒfƒB(Vocal‚É‘Š“–)AƒŠƒYƒ€(Drum‚É‘Š“–)Aƒn[ƒ‚ƒj[(Bass)‚Ì‚İ‚ÅÃ“I‚È•ªŠòBü”g”‚ÍAShureĞ‚Ì•\‚ğQÆB
+    %% å¸¯åŸŸãƒ•ã‚£ãƒ«ã‚¿
+    % ç¾çŠ¶ã¯ãƒ¡ãƒ­ãƒ‡ã‚£(Vocalã«ç›¸å½“)ã€ãƒªã‚ºãƒ (Drumã«ç›¸å½“)ã€ãƒãƒ¼ãƒ¢ãƒ‹ãƒ¼(Bass)ã®ã¿ã§é™çš„ãªåˆ†å²ã€‚å‘¨æ³¢æ•°ã¯ã€Shureç¤¾ã®è¡¨ã‚’å‚ç…§ã€‚
     % http://www.shureblog.jp/shure-notes/%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%83%9B%E3%83%B3-%E5%91%A8%E6%B3%A2%E6%95%B0%E7%89%B9%E6%80%A7%E3%81%AE%E8%A6%8B%E6%96%B9/
     if bandpass_choice == 1 % Melody
-        Wn = [150 4000]/(Fs/2); % ’Ê‰ß‘Ñˆæ‚ğ•\‚·ƒxƒNƒgƒ‹B0Hz‚ª0A(Fs/2)Hz‚ª1‚Æ‚È‚é‚æ‚¤ƒXƒP[ƒŠƒ“ƒO
-        fil = fir1(width_result, Wn ,'bandpass'); % ƒoƒ“ƒhƒpƒXƒtƒBƒ‹ƒ^‚ÌİŒv
+        Wn = [150 4000]/(Fs/2); % é€šéå¸¯åŸŸã‚’è¡¨ã™ãƒ™ã‚¯ãƒˆãƒ«ã€‚0HzãŒ0ã€(Fs/2)HzãŒ1ã¨ãªã‚‹ã‚ˆã†ã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°
+        fil = fir1(width_result, Wn ,'bandpass'); % ãƒãƒ³ãƒ‰ãƒ‘ã‚¹ãƒ•ã‚£ãƒ«ã‚¿ã®è¨­è¨ˆ
         merge_starttime_filtered = filter(fil, 1, merge_starttime);
     elseif bandpass_choice == 2 % Rhythm
-        Wn = [80 4000]/(Fs/2); % ‘j~‘Ñˆæ‚ğ•\‚·ƒxƒNƒgƒ‹B0Hz‚ª0A(Fs/2)Hz‚ª1‚Æ‚È‚é‚æ‚¤ƒXƒP[ƒŠƒ“ƒO
-        fil = fir1(width_result, Wn ,'stop'); % ƒoƒ“ƒhƒXƒgƒbƒvƒtƒBƒ‹ƒ^‚ÌİŒv
+        Wn = [80 4000]/(Fs/2); % é˜»æ­¢å¸¯åŸŸã‚’è¡¨ã™ãƒ™ã‚¯ãƒˆãƒ«ã€‚0HzãŒ0ã€(Fs/2)HzãŒ1ã¨ãªã‚‹ã‚ˆã†ã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°
+        fil = fir1(width_result, Wn ,'stop'); % ãƒãƒ³ãƒ‰ã‚¹ãƒˆãƒƒãƒ—ãƒ•ã‚£ãƒ«ã‚¿ã®è¨­è¨ˆ
         merge_starttime_filtered = filter(fil, 1, merge_starttime);
     elseif bandpass_choice == 3 % Harmony
-        Wn = [80 300]/(Fs/2); % ’Ê‰ß‘Ñˆæ‚ğ•\‚·ƒxƒNƒgƒ‹B0Hz‚ª0A(Fs/2)Hz‚ª1‚Æ‚È‚é‚æ‚¤ƒXƒP[ƒŠƒ“ƒO
-        fil = fir1(width_result, Wn ,'bandpass'); % ƒoƒ“ƒhƒpƒXƒtƒBƒ‹ƒ^‚ÌİŒv
+        Wn = [80 300]/(Fs/2); % é€šéå¸¯åŸŸã‚’è¡¨ã™ãƒ™ã‚¯ãƒˆãƒ«ã€‚0HzãŒ0ã€(Fs/2)HzãŒ1ã¨ãªã‚‹ã‚ˆã†ã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°
+        fil = fir1(width_result, Wn ,'bandpass'); % ãƒãƒ³ãƒ‰ãƒ‘ã‚¹ãƒ•ã‚£ãƒ«ã‚¿ã®è¨­è¨ˆ
         merge_starttime_filtered = filter(fil, 1, merge_starttime);
     else
         merge_starttime_filtered = merge_starttime;
     end
     
-    %% FFTÀs
+    %% FFTå®Ÿè¡Œ
     index = 1;
     for t = 1 : N
-        frame = merge_starttime_filtered( (t - 1) * frame_length + 1 : (t - 1) * frame_length + width_result, 1); %ƒtƒŒ[ƒ€İ’è
-        frame_window = frame .* window; %ƒnƒ~ƒ“ƒO‘‹‚ÅŠÛ‚ß
-        spectrum = abs(fft(frame_window)); %‚‘¬ƒt[ƒŠƒG•ÏŠ·‚ÅƒXƒyƒNƒgƒ‰ƒ€¶¬
-%         result(index, :) = spectrum(1:width_result, :); %•b‚²‚Æ‚ÉƒXƒyƒNƒgƒ‰ƒ€‚ğ‹L˜^B
-        result(index, :) = spectrum(1:width_result, :) - mean(spectrum(1:width_result, :)); %•b‚²‚Æ‚ÉƒXƒyƒNƒgƒ‰ƒ€‚ğ‹L˜^B•½‹Ï‚ğˆø‚¢‚Ä•W€‰»B
-        result(index, :) = result(index, :) - min(result(index, :)); %”ñ•‰’ls—ñ‚Æ‚·‚é‚½‚ßA‘S‘Ì‚ÉÅ¬’l•ª‚ğ‘«‚·B
+        frame = merge_starttime_filtered( (t - 1) * frame_length + 1 : (t - 1) * frame_length + width_result, 1); %ãƒ•ãƒ¬ãƒ¼ãƒ è¨­å®š
+        frame_window = frame .* window; %ãƒãƒŸãƒ³ã‚°çª“ã§ä¸¸ã‚
+        spectrum = abs(fft(frame_window)); %é«˜é€Ÿãƒ•ãƒ¼ãƒªã‚¨å¤‰æ›ã§ã‚¹ãƒšã‚¯ãƒˆãƒ©ãƒ ç”Ÿæˆ
+%         result(index, :) = spectrum(1:width_result, :); %ç§’ã”ã¨ã«ã‚¹ãƒšã‚¯ãƒˆãƒ©ãƒ ã‚’è¨˜éŒ²ã€‚
+        result(index, :) = spectrum(1:width_result, :) - mean(spectrum(1:width_result, :)); %ç§’ã”ã¨ã«ã‚¹ãƒšã‚¯ãƒˆãƒ©ãƒ ã‚’è¨˜éŒ²ã€‚å¹³å‡ã‚’å¼•ã„ã¦æ¨™æº–åŒ–ã€‚
+        result(index, :) = result(index, :) - min(result(index, :)); %éè² å€¤è¡Œåˆ—ã¨ã™ã‚‹ãŸã‚ã€å…¨ä½“ã«æœ€å°å€¤åˆ†ã‚’è¶³ã™ã€‚
         index = index + 1;
     end
     
-%     result = diff(result); %ŠK·æ“¾
-%     csvwrite(csvfilename, result); %csv‘‚«o‚µ
+%     result = diff(result); %éšå·®å–å¾—
+%     csvwrite(csvfilename, result); %csvæ›¸ãå‡ºã—
 end
 
 %plot(result);
