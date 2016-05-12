@@ -14,7 +14,7 @@ genreName = input('Genre Name (with single quote): ');
 bandpass_choice = 2; %Rhythm固定
 
 % forループの回数だけ計量を繰り返す
-for filecount = 20 : 29    
+for filecount = 20 : 29
     % 分析対象とする楽曲の選択
     dpath_yourMusic = ['/Users/K1/Documents/MATLAB/Audio/AudioFiles/genres/' genreName '/'];
     if filecount < 10
@@ -55,18 +55,18 @@ for filecount = 20 : 29
     % [fname_yourMusic, dpath_yourMusic]  =  uigetfile({'*.wav;*.mp3;*.au','Audio File(*.wav,*.mp3,*.au)'},'分析対象とする楽曲を選択してください。 | Open Audio File you want to use as reference.');
     % % genre_choice_str = {'blues','classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock'};
     % % genre_choice_yourMusic = menu('楽曲のジャンルを選択してください。 | What genre is this music?','blues','classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock');
-    % 
+    %
     % % 分析対象とする楽曲のメタタグ入力
     % yourMusicTitle = input('Song Title (with single quote): ');
     % yourMusicArtist = input('Artist (with single quote): ');
-    % 
+    %
     % % バンドパスフィルタ用セレクトボックス
     % bandpass_choice_str = {'Melody', 'Rhythm', 'Harmony'};
     % bandpass_choice = menu('楽曲のどの部分を比較対象としたいですか？ | Which sections do you want to compare?','メロディ | Melody','リズム | Rhythm', 'ハーモニー | Harmony');
-    % 
+    %
     % % 分析対象とする楽曲をFFT・マトリクス化
     % [y_yourMusic, yourMusic, bpm_yourMusic] = audioToMatrix(fname_yourMusic, dpath_yourMusic, 4, bandpass_choice);
-    % 
+    %
     % % 分析対象とする楽曲のプロット
     % figure;
     % subplot(2, 1, 1);
@@ -92,10 +92,10 @@ for filecount = 20 : 29
     % サンプル音楽ディレクトリ内のwavファイルそれぞれについて、FFT・マトリクス化・類似度計量・プロット
     for k = 1 : length(D)
         % サンプル側マトリクスの作成
-        [‾,name_sampleMusic,ext_sampleMusic] = fileparts(D(k).name); %パス、ファイル名、拡張子の取得
+        [~,name_sampleMusic,ext_sampleMusic] = fileparts(D(k).name); %パス、ファイル名、拡張子の取得
         fname_sampleMusic{k} = strcat(name_sampleMusic, ext_sampleMusic); %ファイル名と拡張子を結合
         % マトリクス取得
-        [‾, matrix_sampleMusic, ‾] = audioToMatrix(fname_sampleMusic{k}, dpath_sampleMusic, 4, bandpass_choice);
+        [~, matrix_sampleMusic, ~] = audioToMatrix(fname_sampleMusic{k}, dpath_sampleMusic, 4, bandpass_choice);
 
         % コサイン類似度計算
         similarity{k} = calculateCosineSimilarity(yourMusic, matrix_sampleMusic);

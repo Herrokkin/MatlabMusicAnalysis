@@ -2,7 +2,7 @@ function [songBPM] = searchBPM(y, Fs)
 % %UIでファイル取得
 % [fname, dpath]  =  uigetfile({'*.wav;*.mp3','Audio File(*.wav,*.mp3)'},'Open Audio File');
 % [y, Fs] = audioread(fullfile(dpath, fname));
-% 
+%
 % %ステレオ/モノラルで分岐
 % if length(y(1,:)) == 2 %ステレオ時
 %     %merge = (y(:, 1) - y(:, 2)); %Side成分=L-R

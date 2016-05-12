@@ -46,14 +46,14 @@ wb = waitbar(0,'Please wait...'); % 進行状況の表示
 % サンプル音楽ディレクトリ内のwavファイルそれぞれについて、FFT・マトリクス化・類似度計量・プロット
 for k = 1 : length(D)
     % サンプル側マトリクスの作成
-    [‾,name_sampleMusic,ext_sampleMusic] = fileparts(D(k).name); %パス、ファイル名、拡張子の取得
+    [~,name_sampleMusic,ext_sampleMusic] = fileparts(D(k).name); %パス、ファイル名、拡張子の取得
     fname_sampleMusic{k} = strcat(name_sampleMusic, ext_sampleMusic); %ファイル名と拡張子を結合
     % マトリクス取得
-    [‾, matrix_sampleMusic, ‾] = audioToMatrix(fname_sampleMusic{k}, dpath_sampleMusic, 4, bandpass_choice);
+    [~, matrix_sampleMusic, ~] = audioToMatrix(fname_sampleMusic{k}, dpath_sampleMusic, 4, bandpass_choice);
 
     % コサイン類似度計算
     similarity{k} = calculateCosineSimilarity(yourMusic, matrix_sampleMusic);
-    
+
     % 結果用セル配列のデータ埋め込み
     % col1-5: メタ情報, col6-195: 類似度
     % Title, Artist, DatasetName, Part, Filename, Sim001, ..., sim195
@@ -69,7 +69,7 @@ for k = 1 : length(D)
             result{k, length(similarity{k}(1, :)) + 5 + result_index} = 0;
         end
     end
-    
+
     % 類似度のプロット(1)
     subplot(2, 1,2);
     plot(similarity{k}(1:length(similarity{k}) - 1), '-x')
