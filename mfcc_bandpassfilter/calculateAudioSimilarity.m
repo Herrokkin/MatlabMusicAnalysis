@@ -1,6 +1,6 @@
 %function [] = calculateAudioSimilarity()
 
-%% ----------n小節ごとの頭1秒のみを取り出し、相関量を計量するプログラム----------
+%% ----------n??????????????????1??????????????????????????????????????????????????????????????????----------
 % -----Functions-----
 % 1)Make matrix of audio data (FFT)
 % [y, result, bpm] = audioToMatrix(fname, dpath, beats)
@@ -33,12 +33,12 @@ title([fname_yourMusic ' | ' bandpass_choice_str{bandpass_choice}]);
 xlabel('Time (Seconds)');
 
 % Make MFCC matrix of "Music piece to be analyzed"
-melFilterNum = 12; % Number of dimension (MFCC)
+melFilterNum = 24; % Number of dimension (MFCC)
 yourMusic_mel = zeros(length(yourMusic(:,1)), melFilterNum);
 wb = waitbar(0,'Loading Audio Data...'); % Progress bar
 for i = 1 : length(yourMusic(:,1))
     yourMusic_mel(i,:) = melFilterbankAnalysis(Fs_yourMusic, yourMusic(i,:), melFilterNum);
-    waitbar((i / length(yourMusic(:,1))) / 2) % Progress bar
+    waitbar((i / length(yourMusic(:,1)))) % Progress bar
 end
 close(wb) % Close progress bar
 
@@ -50,7 +50,7 @@ sampleMusicDataset = input('Dataset Name: '); % Input dataset name
 D = dir([dpath_sampleMusic '*.wav']); % Search wave files
 fname_sampleMusic = cell(1, length(D)); % Cell array for legend in plot
 similarity = cell(1, length(D)); % Cell array for similarity (temporary)
-result = cell(length(D), 200); %　Cell array for resut, col1-5: Meta data, col6-195: Time-series similarities
+result = cell(length(D), 200); % Cell array for resut, col1-5: Meta data, col6-195: Time-series similarities
 wb = waitbar(0,'Please wait...'); % Progress bar
 
 % FFT > Make matrix > MFCC > Calculate similarities (EACH "Typical phrase")
