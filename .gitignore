@@ -3,6 +3,7 @@ plot/
 bandPassFilter/img/
 bandPassFilter/results/
 mfcc_bandpassfilter/results/
+ifs_bandpassfilter/results/
 *.png
 *.fig
 *.wav
