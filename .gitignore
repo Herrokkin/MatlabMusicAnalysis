@@ -2,6 +2,7 @@ AudioFiles/
 plot/
 bandPassFilter/img/
 bandPassFilter/results/
+mfcc_bandpassfilter/results/
 *.png
 *.fig
 *.wav
