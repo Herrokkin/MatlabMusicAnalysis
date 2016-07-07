@@ -32,16 +32,6 @@ plot(y_yourMusic(:, 1));
 title([fname_yourMusic ' | ' bandpass_choice_str{bandpass_choice}]);
 xlabel('Time (Seconds)');
 
-% Make MFCC matrix of "Music piece to be analyzed"
-melFilterNum = 1000; % Number of dimension (MFCC)
-% yourMusic_mel = zeros(length(yourMusic(:,1)), melFilterNum);
-% wb = waitbar(0,'Loading Audio Data...'); % Progress bar
-% for i = 1 : length(yourMusic(:,1))
-%     yourMusic_mel(i,:) = melFilterbankAnalysis(Fs_yourMusic, yourMusic(i,:), melFilterNum);
-%     waitbar((i / length(yourMusic(:,1)))) % Progress bar
-% end
-% close(wb) % Close progress bar
-
 %% -----"Typical phrases"-----
 % Get a folder that contains "Typical phrases"
 dpath_sampleMusic  =  uigetdir;
@@ -53,7 +43,7 @@ similarity = cell(1, length(D)); % Cell array for similarity (temporary)
 result = cell(length(D), 200); % Cell array for resut, col1-5: Meta data, col6-195: Time-series similarities
 wb = waitbar(0,'Please wait...'); % Progress bar
 
-% FFT > Make matrix > MFCC > Calculate similarities (EACH "Typical phrase")
+% FFT > Make matrix > Calculate similarities (EACH "Typical phrase")
 for k = 1 : length(D)
     % Open a file of "Typical phrase"
     [~,name_sampleMusic,ext_sampleMusic] = fileparts(D(k).name); % Path & Filename
@@ -61,14 +51,8 @@ for k = 1 : length(D)
     % FFT & Make matrix of "Typical phrase"
     [~, matrix_sampleMusic, ~, Fs_sampleMusic] = audioToMatrix(fname_sampleMusic{k}, dpath_sampleMusic, 4, bandpass_choice);
 
-    % Make MFCC matrix of "Typical phrase"
-%     matrix_sampleMusic_mel = zeros(length(matrix_sampleMusic(:,1)), melFilterNum);
-%     for j = 1 : length(matrix_sampleMusic(:,1))
-%         matrix_sampleMusic_mel(j,:) = melFilterbankAnalysis(Fs_sampleMusic, matrix_sampleMusic(j,:), melFilterNum);
-%     end
-
     % Calculate Cosine similarities
-    similarity{k} = calculateCosineSimilarity(yourMusic, matrix_sampleMusic, melFilterNum);
+    similarity{k} = calculateCosineSimilarity(yourMusic, matrix_sampleMusic, 44100);
 
     % Make cell array for result
     % col1-5: Meta data, col6-195: Time-series similarities

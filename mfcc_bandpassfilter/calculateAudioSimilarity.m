@@ -33,7 +33,7 @@ title([fname_yourMusic ' | ' bandpass_choice_str{bandpass_choice}]);
 xlabel('Time (Seconds)');
 
 % Make MFCC matrix of "Music piece to be analyzed"
-melFilterNum = 24; % Number of dimension (MFCC)
+melFilterNum = 32; % Number of dimension (MFCC)
 yourMusic_mel = zeros(length(yourMusic(:,1)), melFilterNum);
 wb = waitbar(0,'Loading Audio Data...'); % Progress bar
 for i = 1 : length(yourMusic(:,1))
