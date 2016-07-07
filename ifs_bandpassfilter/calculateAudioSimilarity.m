@@ -52,7 +52,7 @@ for k = 1 : length(D)
     [~, matrix_sampleMusic, ~, Fs_sampleMusic] = audioToMatrix(fname_sampleMusic{k}, dpath_sampleMusic, 4, bandpass_choice);
 
     % Calculate Cosine similarities
-    similarity{k} = calculateCosineSimilarity(yourMusic, matrix_sampleMusic, 44100);
+    similarity{k} = calculateCosineSimilarity(yourMusic, matrix_sampleMusic, 8192);
 
     % Make cell array for result
     % col1-5: Meta data, col6-195: Time-series similarities
@@ -74,7 +74,7 @@ for k = 1 : length(D)
     subplot(2, 1,2);
     plot(similarity{k}(1:length(similarity{k}) - 1), '-x')
     xlim([1.0, length(yourMusic(:, 1)) + (length(yourMusic(:, 1)) / 50)]);
-    ylim([0.5, 1.0]);
+    ylim([0.0, 1.0]);
     hold all;
 
     waitbar(k / length(D)) % Progress bar
