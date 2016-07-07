@@ -37,7 +37,8 @@ melFilterNum = 32; % Number of dimension (MFCC)
 yourMusic_mel = zeros(length(yourMusic(:,1)), melFilterNum);
 wb = waitbar(0,'Loading Audio Data...'); % Progress bar
 for i = 1 : length(yourMusic(:,1))
-    yourMusic_mel(i,:) = melFilterbankAnalysis(Fs_yourMusic, yourMusic(i,:), melFilterNum);
+    % yourMusic_mel(i,:) = melFilterbankAnalysis(Fs_yourMusic, yourMusic(i,:), melFilterNum);
+    yourMusic_mel(i,:) = melFilterbankAnalysis(length(yourMusic(i,:)), yourMusic(i,:), melFilterNum);
     waitbar((i / length(yourMusic(:,1)))) % Progress bar
 end
 close(wb) % Close progress bar
@@ -64,7 +65,8 @@ for k = 1 : length(D)
     % Make MFCC matrix of "Typical phrase"
     matrix_sampleMusic_mel = zeros(length(matrix_sampleMusic(:,1)), melFilterNum);
     for j = 1 : length(matrix_sampleMusic(:,1))
-        matrix_sampleMusic_mel(j,:) = melFilterbankAnalysis(Fs_sampleMusic, matrix_sampleMusic(j,:), melFilterNum);
+        % matrix_sampleMusic_mel(j,:) = melFilterbankAnalysis(Fs_sampleMusic, matrix_sampleMusic(j,:), melFilterNum);
+        matrix_sampleMusic_mel(j,:) = melFilterbankAnalysis(length(matrix_sampleMusic(j,:)), matrix_sampleMusic(j,:), melFilterNum);
     end
 
     % Calculate Cosine similarities
@@ -87,7 +89,7 @@ for k = 1 : length(D)
     end
 
     % Plot(1)
-    subplot(2, 1,2);
+    subplot(2, 1, 2);
     plot(similarity{k}(1:length(similarity{k}) - 1), '-x')
     xlim([1.0, length(yourMusic(:, 1)) + (length(yourMusic(:, 1)) / 50)]);
     ylim([0.5, 1.0]);
@@ -97,8 +99,8 @@ for k = 1 : length(D)
 end
 
 % Plot(2)
-title(['Time series variation of similarities | ' fname_yourMusic]);
-xlabel('Time (bars)');
+title(['Time series variation of similarities (MFCC & Band-pass filter) | ' fname_yourMusic]);
+xlabel('Time (Bars)');
 ylabel('Similarity');
 legend(fname_sampleMusic);
 grid minor;

@@ -81,8 +81,8 @@ for k = 1 : length(D)
 end
 
 % Plot(2)
-title(['Time series variation of similarities | ' fname_yourMusic]);
-xlabel('Time (bars)');
+title(['Time series variation of similarities (IFS & Band-pass filter) | ' fname_yourMusic]);
+xlabel('Time (Bars)');
 ylabel('Similarity');
 legend(fname_sampleMusic);
 grid minor;

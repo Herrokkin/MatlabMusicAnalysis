@@ -44,7 +44,7 @@ else % csv存在しない場合=>フーリエ変換
     %% FFT前準備
     frame_length = floor(Fs / (songBPM / 60) * frame_beats); %フレーム幅。最後に掛けるののはビート数
     N = floor(length(merge_starttime) / frame_length); %楽曲÷フレーム幅
-    width_result = 22050; %サンプリング長。Fsだと高次元の為、小さめに。
+    width_result = 8192; %サンプリング長。Fsだと高次元の為、小さめに。
     result = zeros(N, width_result); %返り値設定
     window = hamming(width_result); %ハミング窓設定
 
