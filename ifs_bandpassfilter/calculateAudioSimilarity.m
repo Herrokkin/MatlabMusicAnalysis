@@ -1,26 +1,24 @@
 %function [] = calculateAudioSimilarity()
 
-%% ----------n??????????????????1??????????????????????????????????????????????????????????????????----------
+%% ----------Main part of IFS & Band-pass filter calculation----------
 % -----Functions-----
-% 1)Make matrix of audio data (FFT)
-% [y, result, bpm] = audioToMatrix(fname, dpath, beats)
+% 1)Make matrix of audio data (FFT & Band-pass filter)
+% [y, result, bpm] = audioToMatrix(fname, dpath, beats, bandpassFilterRange)
 %
 % 2)Calculate Cosine Similarity
-% similarity{} = calculateCosineSimilarity(yourMusic, sampleMusic)
+% similarity{} = calculateCosineSimilarity(yourMusic, sampleMusic, maxDimension)
 
 %% -----"Music piece to be analyzed"-----
 % Get a file of "Music piece to be analyzed"
 [fname_yourMusic, dpath_yourMusic]  =  uigetfile({'*.wav;*.mp3;*.au','Audio File(*.wav,*.mp3,*.au)'},'Open Audio File you want to use as reference.');
-% genre_choice_str = {'blues','classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock'};
-% genre_choice_yourMusic = menu('What genre is this music?','blues','classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock');
 
 % Input meta data of "Music piece to be analyzed"
 yourMusicTitle = input('Song Title (with single quote): ');
 yourMusicArtist = input('Artist (with single quote): ');
 
 % Select sections for bandpass filter
-bandpass_choice_str = {'Melody', 'Rhythm', 'Harmony'};
-bandpass_choice = menu('Which sections do you want to compare?','Melody','Rhythm', 'Harmony');
+bandpass_choice_str = {'Melody', 'Rhythm', 'Harmony', 'None'};
+bandpass_choice = menu('Which sections do you want to compare?','Melody','Rhythm', 'Harmony', 'No Filter');
 
 % FFT & Make matrix of "Music piece to be analyzed"
 [y_yourMusic, yourMusic, bpm_yourMusic, Fs_yourMusic] = audioToMatrix(fname_yourMusic, dpath_yourMusic, 4, bandpass_choice);
@@ -52,7 +50,7 @@ for k = 1 : length(D)
     [~, matrix_sampleMusic, ~, Fs_sampleMusic] = audioToMatrix(fname_sampleMusic{k}, dpath_sampleMusic, 4, bandpass_choice);
 
     % Calculate Cosine similarities
-    similarity{k} = calculateCosineSimilarity(yourMusic, matrix_sampleMusic, 8192);
+    similarity{k} = calculateCosineSimilarity(yourMusic, matrix_sampleMusic, Fs_yourMusic / 2);
 
     % Make cell array for result
     % col1-5: Meta data, col6-195: Time-series similarities
@@ -92,7 +90,7 @@ close(wb) % Close progress bar
 
 %% -----Make a result table & Write csv-----
 resultTable = cell2table(result);
-writetable(resultTable,['similarities_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.csv']);
+writetable(resultTable,['similarities_IFSbandpass_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.csv']);
 
 %% -----Display max/min of genre similarity in 1 row-----
 genreOneRow = [];
@@ -119,6 +117,6 @@ for m = 6:200
     end
 end
 resultTable = cell2table(genreOneRow);
-writetable(resultTable,['genreOneRow_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.csv']);
+writetable(resultTable,['genreOneRow_IFSbandpass_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.csv']);
 
 %end

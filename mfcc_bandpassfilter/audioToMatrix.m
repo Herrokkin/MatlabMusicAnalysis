@@ -51,6 +51,7 @@ else % csv存在しない場合=>フーリエ変換
     %% 帯域フィルタ
     % 現状はメロディ(Vocalに相当)、リズム(Drumに相当)、ハーモニー(Bass)のみで静的な分岐。周波数は、Shure社の表を参照。
     % http://www.shureblog.jp/shure-notes/%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%83%9B%E3%83%B3-%E5%91%A8%E6%B3%A2%E6%95%B0%E7%89%B9%E6%80%A7%E3%81%AE%E8%A6%8B%E6%96%B9/
+    filter_frequency_range = 8192;
     if bandpass_choice == 1 % Melody
         Wn = [200 5000]/(Fs/2); % 通過帯域を表すベクトル。0Hzが0、(Fs/2)Hzが1となるようスケーリング
         fil = fir1(width_result, Wn ,'bandpass'); % バンドパスフィルタの設計
