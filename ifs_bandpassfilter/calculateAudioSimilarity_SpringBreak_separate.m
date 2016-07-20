@@ -121,7 +121,7 @@ for bandpass_choice_index = 1 : 4
           end
           if result{l,m} <= min_tmp
               min_tmp = result{l,m};
-              if min_tmp == 1.0
+              if min_tmp == 1.0 & min_tmp ~= 0.0
                   genreOneRow{2,m-5} = [];
               else
                   genreOneRow{2,m-5} = result{l,5};

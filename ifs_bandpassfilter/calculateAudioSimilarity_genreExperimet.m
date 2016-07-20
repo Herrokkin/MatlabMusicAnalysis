@@ -22,7 +22,7 @@ genreName = input('Genre Name (with single quote): ');
 bandpass_choice_str = {'Melody', 'Rhythm', 'Harmony', 'No Filter'};
 bandpass_choice = menu('Which sections do you want to compare?','Melody','Rhythm', 'Harmony', 'No Filter');
 
-b_filecount = waitbar(0,'FILE COUNT'); % Progress bar
+wb_filecount = waitbar(0,'FILE COUNT'); % Progress bar
 for filecount = 0 : 9
   waitbar(filecount + 1 / 10) % Progress bar
   %% -----"Music piece to be analyzed"-----
@@ -40,7 +40,7 @@ for filecount = 0 : 9
       yourMusicTitle = [genreName '.000' int2str(filecount)];
   end
   yourMusicArtist = 'genres';
-  
+
   % Select sections for bandpass filter
   % bandpass_choice_str = {'Melody', 'Rhythm', 'Harmony', 'None'};
   % bandpass_choice = menu('Which sections do you want to compare?','Melody','Rhythm', 'Harmony', 'No Filter');
@@ -121,6 +121,7 @@ for filecount = 0 : 9
 
   %% -----Display max/min of genre similarity in 1 row-----
   genreOneRow = [];
+  genreOneRowForTfIdf = [];
   for m = 6:200
       max_tmp = 0;
       min_tmp = 1.0;
@@ -129,13 +130,15 @@ for filecount = 0 : 9
               max_tmp = result{l,m};
               if max_tmp == 0
                   genreOneRow{1,m-5} = [];
+                  genreOneRowForTfIdf{1,m-5} = [];
               else
                   genreOneRow{1,m-5} = result{l,5};
+                  genreOneRowForTfIdf{1,m-5} = result{l,5};
               end
           end
           if result{l,m} <= min_tmp
               min_tmp = result{l,m};
-              if min_tmp == 1.0
+              if min_tmp == 1.0 & min_tmp ~= 0.0
                   genreOneRow{2,m-5} = [];
               else
                   genreOneRow{2,m-5} = result{l,5};
@@ -144,7 +147,9 @@ for filecount = 0 : 9
       end
   end
   resultTable = cell2table(genreOneRow);
-  writetable(resultTable,['genreOneRow_IFSbandpass_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.csv']);
+  writetable(resultTable,['genreOneRow_MFCCbandpass_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.csv']);
+  resultTableForTfIdf = cell2table(genreOneRowForTfIdf);
+  writetable(resultTable,['genreOneRowForTfIdf_MFCCbandpass_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.txt']);
 end % for loop of filecount
 close(wb_filecount) % Close progress bar
 
