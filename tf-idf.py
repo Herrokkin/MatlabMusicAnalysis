@@ -4,7 +4,7 @@ import MeCab
 import math
 
 # single quote & comma separated
-sentence = []
+sentence = ['', '', '', '', '', '', '', '', '', '']
 
 num = len(sentence)
 result = []

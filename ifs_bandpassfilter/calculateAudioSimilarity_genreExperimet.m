@@ -149,7 +149,7 @@ for filecount = 0 : 9
   resultTable = cell2table(genreOneRow);
   writetable(resultTable,['genreOneRow_MFCCbandpass_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.csv']);
   resultTableForTfIdf = cell2table(genreOneRowForTfIdf);
-  writetable(resultTable,['genreOneRowForTfIdf_MFCCbandpass_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.txt']);
+  writetable(resultTableForTfIdf,['genreOneRowForTfIdf_MFCCbandpass_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.txt']);
 end % for loop of filecount
 close(wb_filecount) % Close progress bar
 
