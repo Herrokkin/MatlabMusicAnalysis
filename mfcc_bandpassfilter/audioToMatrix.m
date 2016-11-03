@@ -76,7 +76,7 @@ else % csv存在しない場合=>フーリエ変換
         spectrum = abs(fft(frame_window)); %高速フーリエ変換でスペクトラム生成
         result(index, :) = spectrum(1:width_result, :); %秒ごとにスペクトラムを記録。
         % result(index, :) = spectrum(1:width_result, :) - mean(spectrum(1:width_result, :)); %秒ごとにスペクトラムを記録。平均を引いて標準化。
-        result(index, :) = result(index, :) - min(result(index, :)); %非負値行列とするため、全体に最小値分を足す。
+        % result(index, :) = result(index, :) - min(result(index, :)); %非負値行列とするため、全体に最小値分を足す。
         index = index + 1;
     end
 

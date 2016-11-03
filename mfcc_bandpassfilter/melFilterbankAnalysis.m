@@ -1,10 +1,10 @@
-function [AdftSum] = melFilterbankAnalysis(Fs, Adft, melFilterNum)
+function [AdftSum, AdftCpst] = melFilterbankAnalysis(Fs, Adft, melFilterNum)
 fftsize = Fs;                         % フーリエ変換の次数, 周波数ポイントの数
 fscale = linspace(0, Fs/2, fftsize/2);  % 周波数スケール（0～Fs/2をfftsize/2に分割）
 Adft_log = log10(Adft);
 
 % メルフィルタバンクの開始・終了周波数を求める
-%  melFilterNum = 20;                      % フィルタバンクの分割数
+% melFilterNum = 20;                      % フィルタバンクの分割数
 melScale = mellog(fscale);              % メルスケール軸
 melWidth = max(melScale) / ( melFilterNum / 2 + 0.5 );  %フィルタバンクの幅
 %  メルスケール上で等間隔、ただし半分は隣と重複しているので(分割数/2+0.5)で割る
@@ -52,12 +52,13 @@ for count = 1 : 1 : filtersize
     AdftSum = [AdftSum sum(AdftFilterBank)];
 end
 
-% % フィルタバンクによって melFilterNum 次元に圧縮された対数振幅スペクトルを求める
-% bandpassMedianFreq = median(bandpassFreq,2);    % バンドパスフィルタの中心周波数
-% 
-% AdftSum_log = log10(AdftSum);
-% 
-% % コサイン変換
+% フィルタバンクによって melFilterNum 次元に圧縮された対数振幅スペクトルを求める
+bandpassMedianFreq = median(bandpassFreq,2);    % バンドパスフィルタの中心周波数
+
+AdftSum_log = log10(AdftSum);
+
+% コサイン変換
 % cpst = 12;      % ケプストラム係数（低次成分何次元を取り出すか）
-% AdftCpst = dct(AdftSum_log);
+AdftCpst = dct(AdftSum_log);
+% AdftCpst_low = AdftCpst(1:cpst);
 end

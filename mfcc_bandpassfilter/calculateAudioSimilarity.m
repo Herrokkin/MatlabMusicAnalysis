@@ -30,18 +30,33 @@ bandpass_choice = menu('Which sections do you want to compare?','Melody','Rhythm
 figure;
 subplot(2, 1, 1);
 plot(y_yourMusic(:, 1));
-title([fname_yourMusic ' | ' bandpass_choice_str{bandpass_choice}]);
-xlabel('Time (Seconds)');
+title(['Waveform | ' yourMusicArtist ' - ' yourMusicTitle ' (' bandpass_choice_str{bandpass_choice} ')']);
+xlabel('Time (Bars)');
+ylabel('Amplitude');
+ax = gca;
+x_tick = [];
+x_tick_label = [];
+for x_tick_index = 0 : floor( (length(yourMusic(:,1))) / 10 )
+    x_tick_new = (60 / bpm_yourMusic * 4) * Fs_yourMusic * x_tick_index * 10;
+    x_tick = [x_tick x_tick_new];    
+    x_tick_label = [x_tick_label x_tick_index *10];
+end
+set(ax,'XTick',x_tick);
+set(ax,'XTickLabel',x_tick_label);
+grid on;
+
 
 % Make MFCC matrix of "Music piece to be analyzed"
-melFilterNum = 32; % Number of dimension (MFCC)
+melFilterNum = 20; % Number of dimension (MFCC)
+cpst = 12; % ?????????????????????????????????????????????????????????????????????
 yourMusic_mel = zeros(length(yourMusic(:,1)), melFilterNum);
 wb = waitbar(0,'Loading Audio Data...'); % Progress bar
 for i = 1 : length(yourMusic(:,1))
     % yourMusic_mel(i,:) = melFilterbankAnalysis(Fs_yourMusic, yourMusic(i,:), melFilterNum);
-    yourMusic_mel(i,:) = melFilterbankAnalysis(length(yourMusic(i,:)), yourMusic(i,:), melFilterNum);
+    [yourMusic_adftSum(i,:), yourMusic_mel(i,:)] = melFilterbankAnalysis(length(yourMusic(i,:)), yourMusic(i,:), melFilterNum);
     waitbar((i / length(yourMusic(:,1)))) % Progress bar
 end
+yourMusic_mel = yourMusic_mel(:, 1:cpst);
 close(wb) % Close progress bar
 
 %% -----"Typical phrases"-----
@@ -67,11 +82,12 @@ for k = 1 : length(D)
     matrix_sampleMusic_mel = zeros(length(matrix_sampleMusic(:,1)), melFilterNum);
     for j = 1 : length(matrix_sampleMusic(:,1))
         % matrix_sampleMusic_mel(j,:) = melFilterbankAnalysis(Fs_sampleMusic, matrix_sampleMusic(j,:), melFilterNum);
-        matrix_sampleMusic_mel(j,:) = melFilterbankAnalysis(length(matrix_sampleMusic(j,:)), matrix_sampleMusic(j,:), melFilterNum);
+        [matrix_sampleMusic_adftSum(j,:), matrix_sampleMusic_mel(j,:)] = melFilterbankAnalysis(length(matrix_sampleMusic(j,:)), matrix_sampleMusic(j,:), melFilterNum);
     end
+    matrix_sampleMusic_mel = matrix_sampleMusic_mel(:, 1:cpst);
 
     % Calculate Cosine similarities
-    similarity{k} = calculateCosineSimilarity(yourMusic_mel, matrix_sampleMusic_mel, melFilterNum);
+    similarity{k} = calculateCosineSimilarity(yourMusic_mel, matrix_sampleMusic_mel, cpst);
 
     % Make cell array for result
     % col1-5: Meta data, col6-195: Time-series similarities
@@ -100,7 +116,7 @@ for k = 1 : length(D)
 end
 
 % Plot(2)
-title(['Time series variation of similarities (MFCC & Band-pass filter) | ' fname_yourMusic]);
+title(['Time series variation of similarities | ' yourMusicArtist ' - ' yourMusicTitle ' (' bandpass_choice_str{bandpass_choice} ')']);
 xlabel('Time (Bars)');
 ylabel('Similarity');
 legend(fname_sampleMusic);

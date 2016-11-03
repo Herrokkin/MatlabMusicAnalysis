@@ -22,7 +22,8 @@ sampleMusicDataset = 'SpringBreak'; % Input dataset name
 
 bandpass_choice_str = {'Melody', 'Rhythm', 'Harmony', 'No Filter'};
 
-melFilterNum = 32; % Number of dimension (MFCC)
+melFilterNum = 20; % Number of dimension (MFCC)
+cpst = 12; % ケプストラム係数（低次成分何次元を取り出すか）
 
 %% -----"Music piece to be analyzed"-----
 % Get a file of "Music piece to be analyzed"
@@ -54,9 +55,10 @@ for bandpass_choice_index = 1 : 4
   wb = waitbar(0,'Loading Audio Data...'); % Progress bar
   for i = 1 : length(yourMusic(:,1))
       % yourMusic_mel(i,:) = melFilterbankAnalysis(Fs_yourMusic, yourMusic(i,:), melFilterNum);
-      yourMusic_mel(i,:) = melFilterbankAnalysis(length(yourMusic(i,:)), yourMusic(i,:), melFilterNum);
+      [yourMusic_adftSum(i,:), yourMusic_mel(i,:)] = melFilterbankAnalysis(length(yourMusic(i,:)), yourMusic(i,:), melFilterNum);
       waitbar((i / length(yourMusic(:,1)))) % Progress bar
   end
+  yourMusic_mel = yourMusic_mel(:, 1:cpst);
   close(wb) % Close progress bar
 
   %% -----"Typical phrases"-----
@@ -82,11 +84,12 @@ for bandpass_choice_index = 1 : 4
       matrix_sampleMusic_mel = zeros(length(matrix_sampleMusic(:,1)), melFilterNum);
       for j = 1 : length(matrix_sampleMusic(:,1))
           % matrix_sampleMusic_mel(j,:) = melFilterbankAnalysis(Fs_sampleMusic, matrix_sampleMusic(j,:), melFilterNum);
-          matrix_sampleMusic_mel(j,:) = melFilterbankAnalysis(length(matrix_sampleMusic(j,:)), matrix_sampleMusic(j,:), melFilterNum);
+          [matrix_sampleMusic_adftSum(j,:), matrix_sampleMusic_mel(j,:)] = melFilterbankAnalysis(length(matrix_sampleMusic(j,:)), matrix_sampleMusic(j,:), melFilterNum);
       end
+      matrix_sampleMusic_mel = matrix_sampleMusic_mel(:, 1:cpst);
 
       % Calculate Cosine similarities
-      similarity{k} = calculateCosineSimilarity(yourMusic_mel, matrix_sampleMusic_mel, melFilterNum);
+      similarity{k} = calculateCosineSimilarity(yourMusic_mel, matrix_sampleMusic_mel, cpst);
 
       % Make cell array for result
       % col1-5: Meta data, col6-195: Time-series similarities

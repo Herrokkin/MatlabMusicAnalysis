@@ -5,7 +5,7 @@ function [ outputNum, outputAnearB ] = getNearNum( a, b )
 %  b = 5.2;
 %  [outputNum, outputAnearB] = getNearNum(a,b)
 %    outputNum =
-         3
+%        3
 %    outputAnearB =
 %        6
 % ※ なお、同じ距離の数値が複数あったら、両方出力します。
@@ -27,4 +27,3 @@ else
 end
 
 end
-

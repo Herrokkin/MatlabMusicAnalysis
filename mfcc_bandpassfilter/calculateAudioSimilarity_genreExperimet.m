@@ -24,13 +24,14 @@
 genreName = input('Genre Name (with single quote): ');
 bandpass_choice_str = {'Melody', 'Rhythm', 'Harmony', 'No Filter'};
 bandpass_choice = menu('Which sections do you want to compare?','Melody','Rhythm', 'Harmony', 'No Filter');
-melFilterNum = 32; % Number of dimension (MFCC)
+melFilterNum = 20; % Number of dimension (MFCC)
+cpst = 12; % ケプストラム係数（低次成分何次元を取り出すか）
 
 wb_filecount = waitbar(0,'FILE COUNT'); % Progress bar
 for filecount = 0 : 9
   waitbar(filecount + 1 / 10) % Progress bar
   %% -----"Music piece to be analyzed"-----
-  dpath_yourMusic = ['/Users/K1/Documents/MATLAB/Audio/AudioFiles/genres/' genreName '/'];
+  dpath_yourMusic = ['/Users/K1/Documents/MATLAB/MatlabMusicAnalysis/audiofiles/genres/' genreName '/'];
   if filecount < 10
       fname_yourMusic = [genreName '.0000' int2str(filecount) '.wav'];
   else
@@ -65,9 +66,10 @@ for filecount = 0 : 9
   wb = waitbar(0,'Loading Audio Data...'); % Progress bar
   for i = 1 : length(yourMusic(:,1))
       % yourMusic_mel(i,:) = melFilterbankAnalysis(Fs_yourMusic, yourMusic(i,:), melFilterNum);
-      yourMusic_mel(i,:) = melFilterbankAnalysis(length(yourMusic(i,:)), yourMusic(i,:), melFilterNum);
+      [yourMusic_adftSum(i,:), yourMusic_mel(i,:)] = melFilterbankAnalysis(length(yourMusic(i,:)), yourMusic(i,:), melFilterNum);
       waitbar((i / length(yourMusic(:,1)))) % Progress bar
   end
+  yourMusic_mel = yourMusic_mel(:, 1:cpst);
   close(wb) % Close progress bar
 
   %% -----"Typical phrases"-----
@@ -75,7 +77,7 @@ for filecount = 0 : 9
   % dpath_sampleMusic  =  uigetdir;
   % dpath_sampleMusic = [dpath_sampleMusic '/'];
   % sampleMusicDataset = input('Dataset Name: '); % Input dataset name
-  dpath_sampleMusic = '/Users/K1/Documents/MATLAB/Audio/AudioFiles/experiment/cakewalk/drum_hiphop_jazz_pop_rock/';
+  dpath_sampleMusic = '/Users/K1/Documents/MATLAB/MatlabMusicAnalysis/audiofiles/experiment/cakewalk/drum_hiphop_jazz_pop_rock/';
   sampleMusicDataset = 'Cakewalk';
   D = dir([dpath_sampleMusic '*.wav']); % Search wave files
   fname_sampleMusic = cell(1, length(D)); % Cell array for legend in plot
@@ -95,11 +97,12 @@ for filecount = 0 : 9
       matrix_sampleMusic_mel = zeros(length(matrix_sampleMusic(:,1)), melFilterNum);
       for j = 1 : length(matrix_sampleMusic(:,1))
           % matrix_sampleMusic_mel(j,:) = melFilterbankAnalysis(Fs_sampleMusic, matrix_sampleMusic(j,:), melFilterNum);
-          matrix_sampleMusic_mel(j,:) = melFilterbankAnalysis(length(matrix_sampleMusic(j,:)), matrix_sampleMusic(j,:), melFilterNum);
+          [matrix_sampleMusic_adftSum(j,:), matrix_sampleMusic_mel(j,:)] = melFilterbankAnalysis(length(matrix_sampleMusic(j,:)), matrix_sampleMusic(j,:), melFilterNum);
       end
+      matrix_sampleMusic_mel = matrix_sampleMusic_mel(:, 1:cpst);
 
       % Calculate Cosine similarities
-      similarity{k} = calculateCosineSimilarity(yourMusic_mel, matrix_sampleMusic_mel, melFilterNum);
+      similarity{k} = calculateCosineSimilarity(yourMusic_mel, matrix_sampleMusic_mel, cpst);
 
       % Make cell array for result
       % col1-5: Meta data, col6-195: Time-series similarities

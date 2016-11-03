@@ -10,4 +10,3 @@ wavdataWP = filter([1 (pre_emphasis*(-1))],1,wavdataW);
 dft = fft(wavdataWP, fftsize);
 Adft = abs(dft);
 end
-
