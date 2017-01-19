@@ -25,11 +25,16 @@ genreName = input('Genre Name (with single quote): ');
 bandpass_choice_str = {'Melody', 'Rhythm', 'Harmony', 'No Filter'};
 bandpass_choice = menu('Which sections do you want to compare?','Melody','Rhythm', 'Harmony', 'No Filter');
 melFilterNum = 20; % Number of dimension (MFCC)
-cpst = 12; % ケプストラム係数（低次成分何次元を取り出すか）
+cpst = 12; % ?????????????????????????????????????????????????????????????????????
 
-wb_filecount = waitbar(0,'FILE COUNT'); % Progress bar
-for filecount = 0 : 9
-  waitbar(filecount + 1 / 10) % Progress bar
+numOfFile = 100;
+% wb_filecount = waitbar(0,'FILE COUNT'); % Progress bar
+genreOneRowForTfIdf = [];
+
+for filecount = 0 : numOfFile - 1
+%   waitbar(filecount + 1 / numOfFile) % Progress bar
+  disp(['Status: ' int2str(filecount + 1) ' / ' int2str(numOfFile)])
+  
   %% -----"Music piece to be analyzed"-----
   dpath_yourMusic = ['/Users/K1/Documents/MATLAB/MatlabMusicAnalysis/audiofiles/genres/' genreName '/'];
   if filecount < 10
@@ -141,41 +146,31 @@ for filecount = 0 : 9
 
 
   %% -----Make a result table & Write csv-----
-  resultTable = cell2table(result);
-  writetable(resultTable,['similarities_MFCCbandpass_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.csv']);
+%   resultTable = cell2table(result);
+%   writetable(resultTable,['similarities_MFCCbandpass_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.csv']);
 
   %% -----Display max/min of genre similarity in 1 row-----
   genreOneRow = [];
-  genreOneRowForTfIdf = [];
   for m = 6:200
       max_tmp = 0;
-      min_tmp = 1.0;
       for l = 1:k
           if result{l,m} >= max_tmp
               max_tmp = result{l,m};
               if max_tmp == 0
                   genreOneRow{1,m-5} = [];
-                  genreOneRowForTfIdf{1,m-5} = [];
+                  genreOneRowForTfIdf{filecount + 1,m-5} = [];
               else
                   genreOneRow{1,m-5} = result{l,5};
-                  genreOneRowForTfIdf{1,m-5} = result{l,5};
-              end
-          end
-          if result{l,m} <= min_tmp
-              min_tmp = result{l,m};
-              if min_tmp == 1.0 & min_tmp ~= 0.0
-                  genreOneRow{2,m-5} = [];
-              else
-                  genreOneRow{2,m-5} = result{l,5};
+                  genreOneRowForTfIdf{filecount + 1,m-5} = result{l,5};
               end
           end
       end
   end
-  resultTable = cell2table(genreOneRow);
-  writetable(resultTable,['genreOneRow_MFCCbandpass_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.csv']);
-  resultTableForTfIdf = cell2table(genreOneRowForTfIdf);
-  writetable(resultTableForTfIdf,['genreOneRowForTfIdf_MFCCbandpass_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.txt']);
+%   resultTable = cell2table(genreOneRow);
+%   writetable(resultTable,['genreOneRow_MFCCbandpass_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.csv']);
 end % for loop of filecount
-close(wb_filecount) % Close progress bar
+resultTableForTfIdf = cell2table(genreOneRowForTfIdf);
+writetable(resultTableForTfIdf,['genreOneRowForTfIdf_MFCCbandpass_' yourMusicTitle '_' bandpass_choice_str{bandpass_choice} '.txt']);
+% close(wb_filecount) % Close progress bar
 
 %end
