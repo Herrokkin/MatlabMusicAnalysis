@@ -5,7 +5,7 @@ import wavio
 import math
 import numpy as np
 import scipy.signal
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 
 # ----------各種関数の定義_ここから----------
@@ -129,9 +129,75 @@ def searchBPM(y, Fs):
 
 # ----------BEGIN_Frequency Filtering----------
 # http://aidiary.hatenablog.com/entry/20110514/1305377659
-# Band-pass Filter
+def sinc(x):
+    if x == 0.0: return 1.0
+    else: return np.sin(x) / x
+
+def createBPF(fe1, fe2, delta):
+    """バンドパスフィルタを設計、fe1:エッジ周波数（低）、fe2:エッジ周波数（高）
+    delta:遷移帯域幅"""
+    # 遷移帯域幅を満たすフィルタ係数の数を計算
+    # N+1が奇数になるように調整が必要
+    N = round(3.1 / delta) - 1
+    if N + 1 % 2 == 0: N += 1
+    N = int(N)
+
+    # フィルタ係数を求める
+    b = []
+    for i in range(-N/2, N/2 + 1):
+        b.append(2 * fe2 * sinc(2 * math.pi * fe2 * i) - 2 * fe1 * sinc(2 * math.pi * fe1 * i))
+
+    # ハニング窓をかける（窓関数法）
+    hanningWindow = np.hanning(N + 1)
+    for i in range(len(b)):
+        b[i] *= hanningWindow[i]
+
+    return b
+
+def fir(x, b):
+    """FIRフィルタをかける、x:入力信号、b:フィルタ係数"""
+    y = [0.0] * len(x)  # フィルタの出力信号
+    N = len(b) - 1      # フィルタ係数の数
+    for n in range(len(x)):
+        for i in range(N+1):
+            if n - i >= 0:
+                y[n] += b[i] * x[n - i]
+    return y
 
 # ----------END_Frequency Filtering----------
+
+# ----------BEGIN_FFT----------
+def fft(x, fs, nfft):
+    """x:input signal, fs, nfft"""
+    # ハミング窓をかける
+    hammingWindow = np.hamming(len(x))
+    x = x * hammingWindow
+
+    # 振幅スペクトルを求める
+    # nfft = 2048  # FFTのサンプル数
+    # spec = np.abs(np.fft.fft(x, nfft))[:nfft/2]
+    spec = np.abs(np.fft.fft(x, nfft))
+    fscale = np.fft.fftfreq(nfft, d = 1.0 / fs)[:nfft/2]
+
+    # # プロット
+    # plt.plot(fscale, spec)
+    # plt.xlabel("frequency [Hz]")
+    # plt.ylabel("amplitude spectrum")
+    # savefig("spectrum.png")
+    # plt.show()
+
+    return spec
+
+def create_fft_matrix(x, fs, bpm):
+    """x:input signal, fs, bpm"""
+    frame_length = int(np.floor(fs / (bpm / 60) * 4)) # フレーム幅, 4拍分, int
+    N = int(np.floor(len(x) / frame_length)) # 楽曲÷フレーム幅
+    nfft = 8192 # FFTのサンプル数
+    fft_matrix = np.zeros((N, nfft))
+    for phrase in range(N):
+        fft_matrix[phrase,:] = fft(x[phrase * frame_length : (phrase * frame_length) + frame_length], fs, nfft)
+    return fft_matrix
+# ----------BEGIN_FFT----------
 
 #類似度計算
 def calculateSimilarity(targetMusic, typicalPhrase):
@@ -174,10 +240,30 @@ if __name__ == "__main__":
     targetMusic_y_startPoint = searchBeatStartPoint(targetMusic_y_preEmphasis, targetMusic_Fs) # Estimate beat start point
     targetMusic_BPM = searchBPM(targetMusic_y_startPoint, targetMusic_Fs) # Estimate BPM
 
-    print "Y: ", targetMusic_y
+    print "Y: ", targetMusic_y_startPoint
     print "Fs: ", targetMusic_Fs
     print "BPM: ", targetMusic_BPM
 
+    # -----BPF-----
+    # BPFを設計
+    fe1 = 200.0 / targetMusic_Fs # 正規化したエッジ周波数
+    fe2 = 500.0 / targetMusic_Fs # 正規化したエッジ周波数
+    delta = 100.0 / targetMusic_Fs # 正規化した遷移帯域幅
+    b = createBPF(fe1, fe2, delta)
+
+    # フィルタをかける
+    targetMusic_y_bandpassfilter = fir(targetMusic_y_startPoint, b)
+    # plt.plot(targetMusic_y_bandpassfilter)
+    # plt.show()
+    # -----BPF-----
+
+    # -----FFT-----
+    # fft(targetMusic_y_startPoint, targetMusic_Fs, nfft)
+    targetMusic_fftmatrix = create_fft_matrix(targetMusic_y_bandpassfilter, targetMusic_Fs, targetMusic_BPM)
+    # targetMusic_fftmatrix = targetMusic_fftmatrix[:,:8000]
+    plt.plot(targetMusic_fftmatrix[30,:])
+    plt.show()
+    # -----FFT-----
 
     # ----------END_Target Music----------
 
